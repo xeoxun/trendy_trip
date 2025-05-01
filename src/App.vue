@@ -15,21 +15,14 @@
 </template>
 
 <style>
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  font-family: 'Pretendard SemiBold', sans-serif;
-}
-
 #app {
   display: flex;
   flex-direction: column;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   margin: 0;
   padding: 0;
+  font-family: 'Pretendard SemiBold', sans-serif;
 }
 
 #web_title {
@@ -41,12 +34,6 @@ html, body {
   font-family: 'Pretendard SemiBold', sans-serif;
   background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.home_link {
-  font-size: 20px;
-  color: black;
-  text-decoration: none;
 }
 
 /* 아래 전체 영역을 user_section이 채움 */

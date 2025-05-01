@@ -1,8 +1,8 @@
 <template>
   <div class = "section">
     <div class="title">
-      <p> 이번 여행, 얼만큼 여행하고 싶으신가요? </p>
-      <h3> 여행 날짜를 선택해주세요 </h3>
+      <p> 미리 계획한 여행 장소가 있나요? </p>
+      <h3> 여행 장소를 입력해주세요 </h3>
     </div>
     <div id="time_section">
 
@@ -17,6 +17,7 @@
 
 <style scoped>
 .section {
+  padding: 20px;
   height: 100%;
   display: flex;
   flex-direction: column;

@@ -1,8 +1,8 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import router from '@/router/index'
+import router from './router'
 
-import VCalendar from 'v-calendar'; // 달력 모듈
+import VCalendar from 'v-calendar';
 import 'v-calendar/style.css';
 
 createApp(App).use(router).use(VCalendar, {}).mount('#app')

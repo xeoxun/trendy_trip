@@ -5,19 +5,20 @@
       <h3> 가고 싶은 지역을 선택해주세요 </h3>
     </div>
     <div id="area_section">
-      <button id="area_btn"> 서울 </button>
-      <button id="area_btn"> 경기 </button>
-      <button id="area_btn"> 충청 </button>
-      <button id="area_btn"> 강원 </button>
-      <button id="area_btn"> 경상 </button>
-      <button id="area_btn"> 전라 </button>
-      <button id="area_btn"> 제주 </button>
-      <button id="area_btn"> 인천 </button>
-      <button id="area_btn"> 부산 </button>
-      <button id="area_btn"> 대구 </button>
-      <button id="area_btn"> 광주 </button>
-      <button id="area_btn"> 대전 </button>
-      <button id="area_btn"> 세종 </button>
+      <button class="area_btn"> 서울 </button>
+      <button class="area_btn"> 경기 </button>
+      <button class="area_btn"> 충청 </button>
+      <button class="area_btn"> 강원 </button>
+      <button class="area_btn"> 경상 </button>
+      <button class="area_btn"> 전라 </button>
+      <button class="area_btn"> 제주 </button>
+      <button class="area_btn"> 인천 </button>
+      <button class="area_btn"> 부산 </button>
+      <button class="area_btn"> 대구 </button>
+      <button class="area_btn"> 광주 </button>
+      <button class="area_btn"> 대전 </button>
+      <button class="area_btn"> 세종 </button>
+>>>>>>> recovery-branch
     </div>
     <footer>
       <button id="next_btn" @click="$emit('next')"> 다음 </button>
@@ -49,7 +50,7 @@
   gap: 20px;
 }
 
-#area_btn {
+.area_btn {
   width: 85px;
   height: 85px;
   border-radius: 50%;

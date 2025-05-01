@@ -5,8 +5,7 @@
       <h3> 여행 날짜를 선택해주세요 </h3>
     </div>
     <div id="day_section">
-      <VCalendar />
-      <VDatePicker :attributes="attributes" />
+      <VDatePicker v-model.range="range" mode="date" />
     </div>
     <footer>
       <button id="before_btn" @click="$emit('prev')">이전</button>
@@ -18,52 +17,34 @@
 <script setup>
 import { ref } from 'vue';
 
-const attributes = ref([
-  {
-    highlight: 'blue',
-    dates: [{start: new Date(), end: new Date() }],
-  },
-]);
+const range = ref({
+  highlight: 'skyblue',
+  start: new Date(),
+  end: new Date(),
+  span: null,
+});
 </script>
 
 <style scoped>
-  .section {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
+.section {
+  padding: 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
   
-  .title {
-    flex: 0 0 20%;
-    display: flex;
-    padding: 30px;
-    flex-direction: column;
-    justify-content: center;
-  }
+.title {
+  flex: 0 0 20%;
+  display: flex;
+  padding: 30px;
+  flex-direction: column;
+}
   
-  .travel_section {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  #area_section {
+  #day_section {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 10px;
-  }
-  
-#area_btn {
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    background-color: #dcf5f5; /* 아이보리 */
-    border: none;
-    font-weight: bold;
-    font-size: 20px;
-    cursor: pointer;
 }
   
 footer {

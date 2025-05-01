@@ -1,26 +1,26 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import MainPage from '@/views/main.vue'  // 지도
-import UserPage from '@/views/userPage.vue'  // 사용자 선택 초기 화면
-import HomePage from '@/views/homePage.vue'
+import MainPage from '@/views/main.vue' // 지도
+import HomePage from '@/views/homePage.vue' // 시작 페이지
+import UserPage from '@/views/userPage.vue' // 사용자 정의 페이지
 
 const routes = [
   {
     path: '/',
-    component: HomePage,
-  },
-  {
-    path: '/user',
-    component: UserPage,
+    component: HomePage
   },
   {
     path: '/main',
-    component: MainPage,
+    component: MainPage
   },
-];
+  {
+    path: '/user',
+    component: UserPage
+  }
+]
 
 const router = createRouter({
-  history: createWebHistory('/'),
-  routes,
+  history: createWebHistory(),
+  routes
 })
 
-export default router;
+export default router
