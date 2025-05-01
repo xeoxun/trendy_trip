@@ -1,221 +1,70 @@
 <template>
   <div id="app">
-    <nav id="side">
-      <ul class="nav_list">
-        <li style="background-color: skyblue; border-color: skyblue;">
-          <h1> ✈️ </h1>
-        </li>
-        <li id="side_btn">
-          <button id="search_btn" @click="search_Popup($event)">
-            <p> 🔍 </p>
-          </button>
-        </li>
-        <li id="side_btn">
-          <button id="calender_btn" @click="calendar_Popup($event)">
-            <span> 📆 </span>
-          </button>
-        </li>
-        <li id="side_btn">
-          <button id="save_btn" @click="save_Popup($event)">
-            <span> 💾 </span>
-          </button>
-        </li>
-        <li id="side_btn">
-          <button id="test_btn" @click="openUserWindow">
-            <span> ❓ </span>
-          </button>
-        </li>
-      </ul>
-    </nav>
-    <div id="map" style="width: 100%; height: 100%;"></div>
+    <header id="web_title"> <!-- 타이틀 보여주기 -->
+      <RouterLink class="home_link" to="/"> Trendy Trip✈️ </RouterLink>
+    </header>
 
-    <Cal_ v-if="isCalendarPopupVisible" :style="popupStyle" @close="calendar_Popup" />
-    <Search_ v-if="isSearchPopupVisible" :style="popupStyle" @close="search_Popup" />
-    <Save_ v-if="isSavePopupVisible" :style="popupStyle" @close="save_Popup" />
+    <div id="view_section">
+      <HomePage></HomePage> <!--초기 사용자 화면 -->
 
-    <div id="category_btn">
-      <button class="category-button" @click="handleRoundButtonClick">관광명소</button>
-      <button class="category-button" @click="handleRoundButtonClick">카페</button>
-      <button class="category-button" @click="handleRoundButtonClick">음식점</button>
+      <transition name="fade" mode="out-in">
+        <router-view />
+      </transition>
     </div>
-    
   </div>
 </template>
 
-<script>
-import Cal_ from './components/calender.vue'
-import Search_ from './components/search.vue'
-// import Place_ from './components/place.vue'
-import Save_ from './components/save_file.vue'
-
-export default {
-  name: 'App',
-  components: {
-    Search_,
-    Cal_,
-    Save_
-  },
-  data() {
-    return {
-      isCalendarPopupVisible: false, // 달력 팝업 상태 관리
-      isSearchPopupVisible: false, // 검색 팝업 상태 관리
-      isSavePopupVisible: false,
-      popupStyle: {} // 팝업 스타일
-    };
-  },
-  methods: {
-    closePopups() {
-      this.isCalendarPopupVisible = false;
-      this.isSearchPopupVisible = false;
-      this.isSavePopupVisible = false;
-    },
-    calendar_Popup() {
-      if (this.isCalendarPopupVisible) {
-        this.closePopups(); // 이미 열려있으면 닫기
-      } else {
-        this.closePopups(); // 다른 팝업 닫기
-        this.isCalendarPopupVisible = true; // 달력 팝업 열기
-        //const buttonRect = event.target.getBoundingClientRect();
-        this.popupStyle = {
-          position: 'absolute',
-          top: `20px`,
-          left: `100px`,
-          zIndex: 1000
-        };
-      }
-    },
-    search_Popup() {
-      if (this.isSearchPopupVisible) {
-        this.closePopups(); // 이미 열려있으면 닫기
-      } else {
-        this.closePopups(); // 다른 팝업 닫기
-        this.isSearchPopupVisible = true; // 검색 팝업 열기
-        //const buttonRect = event.target.getBoundingClientRect();
-        this.popupStyle = {
-          position: 'absolute',
-          top: `20px`,
-          left: `100px`,
-          zIndex: 1000
-        };
-      }
-    },
-    save_Popup() {
-      if (this.isSavePopupVisible) {
-        this.closePopups(); // 이미 열려있으면 닫기
-      } else {
-        this.closePopups(); // 다른 팝업 닫기
-        this.isSavePopupVisible = true; // 검색 팝업 열기
-        //const buttonRect = event.target.getBoundingClientRect();
-        this.popupStyle = {
-          position: 'absolute',
-          top: `20px`,
-          left: `100px`,
-          zIndex: 1000
-        };
-      }
-    },
-    openUserWindow() {
-      window.open('/user', '_blank', 'width=800,height=600');
-    }
-  },
-  mounted() {
-    // 네이버 지도 API 스크립트 로드
-    const script = document.createElement("script");
-    script.src = "https://openapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=f0u1dydazz"; // 실제 NCP Client ID로 변경
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
-
-    script.onload = () => {
-      // 네이버 지도 생성
-      new window.naver.maps.Map("map", {
-        center: new window.naver.maps.LatLng(33.4, 126.55), 
-        zoom: 11,
-      });
-    };
-  }
-}
-</script>
-
 <style>
-body {
-  display: flex;
+html, body {
   margin: 0;
-  height: 100vh; /* 전체 높이 설정 */
-  font-family: 'Pretendard SemiBold', sans-serif
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: 'Pretendard SemiBold', sans-serif;
 }
 
 #app {
   display: flex;
-  width: 100%; /* 전체 너비 설정 */
-}
-
-#side {
-  width: 80px;
-  background-color: white;
-  display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  border: 3px solid skyblue;
-}
-
-.nav_list {
-  list-style: none;
-  padding: 0;
+  width: 100vw;
+  height: 100vh;
   margin: 0;
+  padding: 0;
+}
+
+#web_title {
+  height: 10vh;
   width: 100%;
+  padding-left: 30px;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  font-family: 'Pretendard SemiBold', sans-serif;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.nav_list li {
-  width: 80px;
-  height: 80px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  font-size: 30px;
+.home_link {
+  font-size: 20px;
+  color: black;
+  text-decoration: none;
 }
 
-.nav_list li button {
+/* 아래 전체 영역을 user_section이 채움 */
+#view_section {
   width: 100%;
   height: 100%;
-  border: none;
-  background: none;
-  font-size: inherit;
+  flex: 1;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
+  justify-content: center;  /* 수평 중앙 */
+  align-items: center;      /* 수직 중앙 */
+  background-color: rgb(238, 248, 250);
+  overflow: hidden;
 }
 
-#category_btn {
-  position: absolute; /* 절대 위치로 설정 */
-  top: 20px; /* 상단에서의 위치 */
-  right: 20px; /* 오른쪽에서의 위치 */
-  display: flex; /* Flexbox 사용 */
-  flex-direction: row; /* 수평 정렬 */
-  gap: 10px; /* 버튼 간의 간격 */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s ease;
 }
-
-.category-button {
-  padding: 10px 15px; /* 패딩 */
-  background-color: rgb(6, 111, 192); /* 배경색 */
-  color: white; /* 글자색 */
-  border: none; /* 테두리 제거 */
-  border-radius: 5px; /* 모서리 둥글게 */
-  cursor: pointer; /* 커서 변경 */
-}
-
-.category-button:hover {
-  background-color: deepskyblue; /* 호버 시 색상 변경 */
-}
-
-main {
-  flex-grow: 1; /* 남은 공간을 차지하도록 설정 */
-  border: 3px solid skyblue; /* 윤곽선 설정 */
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
 }
 </style>

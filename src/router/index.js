@@ -1,17 +1,26 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import UserPage from '@/components/travelpick.vue' // 분리할 컴포넌트
+import MainPage from '@/views/main.vue'  // 지도
+import UserPage from '@/views/userPage.vue'  // 사용자 선택 초기 화면
+import HomePage from '@/views/homePage.vue'
 
 const routes = [
   {
+    path: '/',
+    component: HomePage,
+  },
+  {
     path: '/user',
-    name: 'UserPage',
-    component: UserPage
-  }
-]
+    component: UserPage,
+  },
+  {
+    path: '/main',
+    component: MainPage,
+  },
+];
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes
+  history: createWebHistory('/'),
+  routes,
 })
 
-export default router
+export default router;
