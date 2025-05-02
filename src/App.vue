@@ -31,6 +31,7 @@
   padding-left: 30px;
   display: flex;
   align-items: center;
+  font-size: 1.5em;
   font-family: 'Pretendard SemiBold', sans-serif;
   background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -48,6 +49,10 @@
   overflow: hidden;
 }
 
+.home_link {
+  color: black;
+  text-decoration: none;
+}
 .fade-enter-active, .fade-leave-active {
   transition: opacity 0.5s ease;
 }

@@ -18,7 +18,6 @@
       <button class="area_btn"> 광주 </button>
       <button class="area_btn"> 대전 </button>
       <button class="area_btn"> 세종 </button>
->>>>>>> recovery-branch
     </div>
     <footer>
       <button id="next_btn" @click="$emit('next')"> 다음 </button>
@@ -29,8 +28,9 @@
 
 <style scoped>
 .section {
-  padding: 20px;
+  width:100%;
   height: 100%;
+  padding: 20px;
   display: flex;
   flex-direction: column;
 }

@@ -6,6 +6,7 @@
     </div>
     <div id="day_section">
       <VDatePicker v-model.range="range" mode="date" />
+      <p> 선택한 일정: {{ tripDays }}일 </p>
     </div>
     <footer>
       <button id="before_btn" @click="$emit('prev')">이전</button>
@@ -15,19 +16,26 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const range = ref({
-  highlight: 'skyblue',
   start: new Date(),
   end: new Date(),
-  span: null,
+});
+
+const tripDays = computed(() => {  // 일수 계산
+  const start = new Date(range.value.start);
+  const end = new Date(range.value.end);
+  const diffTime = end - start;
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+  return diffDays > 0 ? diffDays : 0;
 });
 </script>
 
 <style scoped>
 .section {
   padding: 20px;
+  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -40,19 +48,19 @@ const range = ref({
   flex-direction: column;
 }
   
-  #day_section {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
+
+#day_section {
+  display: flex;
+  flex-direction: column;  /* flex-direction을 column으로 설정 */
+  align-items: center;
 }
   
 footer {
-    flex: 0 0 10%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 20px;
+  flex: 0 0 10%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
 }
   
 #before_btn, #next_btn {

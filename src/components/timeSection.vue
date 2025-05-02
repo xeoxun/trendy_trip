@@ -9,7 +9,7 @@
     </div>
     <footer>
       <button id="before_btn" @click="$emit('prev')"> 이전 </button> 
-      <RouterLink class="ok_btn" to="/main"> 확인 </RouterLink>  
+      <RouterLink id="ok_btn" to="/main"> 확인 </RouterLink>  
     </footer>
   </div>
 </template>
@@ -17,6 +17,8 @@
 
 <style scoped>
 .section {
+  width: 100%;
+  height: 100%;
   padding: 20px;
   height: 100%;
   display: flex;
@@ -43,10 +45,10 @@ footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 20px;
+  padding: 20px;
 }
   
-#before_btn{
+#before_btn {
   padding: 10px 20px;
   border-radius: 20px;
   background-color: #dce9f5;
@@ -54,7 +56,7 @@ footer {
   cursor: pointer;
 }
   
-.ok_btn {
+#ok_btn {
   padding: 10px 20px;
   border-radius: 20px;
   background-color: #dce9f5;
