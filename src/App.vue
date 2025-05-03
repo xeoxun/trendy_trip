@@ -47,6 +47,7 @@
   align-items: center;      /* 수직 중앙 */
   background-color: rgb(238, 248, 250);
   overflow: hidden;
+  position: relative;
 }
 
 .home_link {

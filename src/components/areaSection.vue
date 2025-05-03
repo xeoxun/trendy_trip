@@ -1,34 +1,37 @@
 <template>
-  <div class = "section">
+  <div class="section">
     <div class="title">
-      <p> 이번 여행, 어디로 떠나볼까요? </p>
-      <h3> 가고 싶은 지역을 선택해주세요 </h3>
+      <p>이번 여행, 어디로 떠나볼까요?</p>
+      <h3>가고 싶은 지역을 선택해주세요</h3>
     </div>
     <div id="area_section">
-      <button class="area_btn"> 서울 </button>
-      <button class="area_btn"> 경기 </button>
-      <button class="area_btn"> 충청 </button>
-      <button class="area_btn"> 강원 </button>
-      <button class="area_btn"> 경상 </button>
-      <button class="area_btn"> 전라 </button>
-      <button class="area_btn"> 제주 </button>
-      <button class="area_btn"> 인천 </button>
-      <button class="area_btn"> 부산 </button>
-      <button class="area_btn"> 대구 </button>
-      <button class="area_btn"> 광주 </button>
-      <button class="area_btn"> 대전 </button>
-      <button class="area_btn"> 세종 </button>
+      <button class="area_btn" v-for="area in areas" :key="area">
+        {{ area }} 
+      </button>
     </div>
     <footer>
-      <button id="next_btn" @click="$emit('next')"> 다음 </button>
+      <button id="next_btn" @click="next">다음</button>
     </footer>
   </div>
 </template>
 
+<script>
+export default {
+  data() {
+    return {
+      areas: [
+        "서울", "경기\n인천", "충청", "강원",
+        "경상", "전라", "제주", "부산",
+        "대구", "광주", "대전", "세종"
+      ],
+    };
+  },
+};
+</script>
 
 <style scoped>
 .section {
-  width:100%;
+  width: 100%;
   height: 100%;
   padding: 20px;
   display: flex;
@@ -54,11 +57,17 @@
   width: 85px;
   height: 85px;
   border-radius: 50%;
-  background-color: #dcf5f5; /* 아이보리 */
+  background-color: #dcf5f5; /* 기본 배경 색 */
   border: none;
   font-weight: bold;
   font-size: 20px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.area_btn.selected {
+  background-color: #3dbbff; /* 선택된 버튼 색 */
+  color: white;
 }
 
 footer {

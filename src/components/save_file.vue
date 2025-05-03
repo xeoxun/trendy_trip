@@ -20,33 +20,41 @@
     
   <style scoped>
   #pop {
-    width: 330px;
-    height: 95%;
-    background-color: white;
-    border: 3px solid skyblue;
-    border-radius: 10px;
-  }
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  width: 300px;
+  height: 90%;
+  background-color: white;
+  border: 3px solid skyblue;
+  border-radius: 10px;
+  position: absolute;
+}
+
+header {
+  flex: 0 0 20%;
+  width: 100%;
+  padding: 10px;
+}
     
-  /* header {
-    width: 100%;
-    height: 20%;
-  } */
+#save_list {
+  width: 100%;
+  height: 70%;
+} 
     
-  #place_list {
-    width: 100%;
-    height: 70%;
-  } 
-    
-  footer {
-    display: flex;
-    justify-content: flex-start; /* 좌측 정렬 */
-    padding: 10px; /* 여백 추가 */
-  }
-    
-  #close_btn {
-    background-color: none; /* 버튼 배경색 */
-    border: none; /* 테두리 제거 */
-    padding: 8px 12px; /* 패딩 추가 */
-    cursor: pointer; /* 커서 변경 */
-  }
-  </style>
+footer {
+  flex: 0 0 10%;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end; /* 👉 우측 정렬 */
+  align-items: center; /* 수직 정렬 */
+}
+
+#close_btn {
+  padding: 10px 10px 10px 10px;
+  border-radius: 20px;
+  background-color: #dce9f5;
+  border: none;
+  cursor: pointer;
+}
+</style>

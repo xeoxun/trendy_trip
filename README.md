@@ -32,3 +32,6 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 =======
 >>>>>>> 2a2f994 (첫번째 커밋)
 >>>>>>> recovery-branch
+
+### 0.1v 버전
+#### 페이지 라우팅 완료, JSON 파일 생성
