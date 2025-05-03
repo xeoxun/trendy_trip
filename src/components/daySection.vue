@@ -6,7 +6,7 @@
     </div>
     <div id="day_section">
       <VDatePicker v-model.range="range" mode="date" />
-      <p> 선택한 일정: {{ tripDays }}일 </p>
+      <p> 일수: {{ tripDays }}</p>
     </div>
     <footer>
       <button id="before_btn" @click="$emit('prev')">이전</button>
@@ -51,8 +51,9 @@ const tripDays = computed(() => {  // 일수 계산
 
 #day_section {
   display: flex;
-  flex-direction: column;  /* flex-direction을 column으로 설정 */
-  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
 }
   
 footer {

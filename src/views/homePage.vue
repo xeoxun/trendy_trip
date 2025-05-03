@@ -1,25 +1,16 @@
 <template>
   <div id="start_section">
     <main id="welcome_text">
-      <h2 style> 사용자 맞춤 감성 여행 플랜 웹사이트 </h2>
+      <h2> 사용자 맞춤 감성 여행 플랜 웹사이트 </h2>
       <h1> Trendy Trip✈️ </h1> 
 
       <p> 시작하려면 버튼을 눌러주세요</p>
 
-      <button id="start_btn" @click="goToUserPage"> 시작하기 </button>
+      <RouterLink id="start_btn" to="/user"> 시작하기 </RouterLink>
     </main>
   </div>
 </template>
 
-<script setup>
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
-
-function goToUserPage() {
-  router.push('/user')  // '/user' 라우트로 이동 (라우트 이름은 설정에 따라 변경)
-}
-</script>
 
 <style>
 #start_section {
@@ -62,6 +53,9 @@ function goToUserPage() {
   background-color: #dce9f5;
   border: none;
   cursor: pointer;
+  color:black;
   min-width: 160px;           /* 최소 너비 지정 (선택사항) */
+  text-decoration: none;
 }
+
 </style>

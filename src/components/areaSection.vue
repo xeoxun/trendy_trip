@@ -8,9 +8,10 @@
       <button class="area_btn" v-for="area in areas" :key="area">
         {{ area }} 
       </button>
+      <VCalendar />
     </div>
     <footer>
-      <button id="next_btn" @click="next">다음</button>
+      <button id="next_btn" @click="$emit('next')">다음</button>
     </footer>
   </div>
 </template>
