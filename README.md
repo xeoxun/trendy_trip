@@ -35,3 +35,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### 0.1v 버전
 #### 페이지 라우팅 완료, JSON 파일 생성
+
+### 0.3V 버전
+#### pinia를 사용한 전역 저장소 사용
+pip install pinia
