@@ -1,11 +1,14 @@
 <template>
   <div id="pop">
     <header> <!-- 팝업의 헤더 -->
-      <h2> 🍊{{ area }}여행</h2>
-      <h4 id = "day"> {{ days }} {{ date }} </h4>
+      <h2> 🍊{{ trip_area }}여행</h2>
+      <p> {{ startDay }} ~ {{ endDay }} </p>
+      <p> 총 {{ tripday }}일 </p>
     </header>
     <article id ="choose">
-
+      <select>
+        <option v-for="n in tripday" :key="n"> Day {{ n }} </option>
+      </select>
     </article>
     <footer>
       <button id = "close_btn"> 닫기❌ </button>
@@ -14,6 +17,8 @@
 </template>
 
 <script>
+import { useDataStore } from '@/store/data'
+
 export default {
   name: 'CalPop',
   props: {
@@ -28,8 +33,22 @@ export default {
     date: {
       type: String,
       required: false
+    },
+    tripDays: {
+      type: Number,
+      required: true
     }
   },
+  setup() {
+    const data = useDataStore();
+
+    return {
+      trip_area: data.area,
+      startDay: data.startDate,
+      endDay: data.endDate,
+      tripday: data.TripDays
+    }
+  }
 }
 </script>
 
@@ -37,7 +56,7 @@ export default {
 #pop {
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  margin: 10px;
   width: 300px;
   height: 90%;
   background-color: white;
@@ -47,9 +66,9 @@ export default {
 }
 
 header {
-  flex: 0 0 20%;
+  height: 30%;
   width: 100%;
-  padding: 10px;
+  padding-left: 20px;
 }
 
 #choose {
@@ -57,8 +76,15 @@ header {
   height: 70%;
 }
 
+select {
+  padding: 10px;
+  border-radius: 8px;
+  border: skyblue;
+  font-size: 14px;
+}
+
 footer {
-  flex: 0 0 10%;
+  height: 10%;
   width: 100%;
   display: flex;
   justify-content: flex-end; /* 👉 우측 정렬 */

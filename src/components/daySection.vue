@@ -1,35 +1,57 @@
 <template>
-  <div class = "section">
+  <div class="section">
     <div class="title">
-      <p> 몇일 일정의 여행을 계획하고 계신가요? </p>
-      <h3> 여행 날짜를 선택해주세요 </h3>
+      <p>몇일 일정의 여행을 계획하고 계신가요?</p>
+      <h3>여행 날짜를 선택해주세요</h3>
     </div>
-    <div id="day_section">
+    <div class="article_section">
       <VDatePicker v-model.range="range" mode="date" />
-      <p> 일수: {{ tripDays }}</p>
+      <p>일수: {{ tripDays }}</p>
     </div>
     <footer>
       <button id="before_btn" @click="$emit('prev')">이전</button>
-      <button id="next_btn" @click="$emit('next')">다음</button>
+      <button id="next_btn" @click="saveDates">확인</button>
     </footer>
   </div>
 </template>
 
-<script setup>
-import { ref, computed } from 'vue';
+<script>
+import { useDataStore } from '@/store/data'
 
-const range = ref({
-  start: new Date(),
-  end: new Date(),
-});
+export default {
+  data() {
+    return {
+      range: {
+        start: new Date(),
+        end: new Date()
+      }
+    }
+  },
+  computed: {
+    tripDays() {
+      const start = new Date(this.range.start)
+      const end = new Date(this.range.end)
+      const diffTime = end - start
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1
+      return diffDays > 0 ? diffDays : 0
+    }
+  },
+  methods: {
+    saveDates() {
+    const data = useDataStore()
 
-const tripDays = computed(() => {  // 일수 계산
-  const start = new Date(range.value.start);
-  const end = new Date(range.value.end);
-  const diffTime = end - start;
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
-  return diffDays > 0 ? diffDays : 0;
-});
+    const formatDate = (date) => {
+      return new Date(date).toISOString().slice(0, 10)
+    }
+
+    data.setStartDay(formatDate(this.range.start))
+    data.setEndDate(formatDate(this.range.end))
+    data.setTripDay(this.tripDays)
+
+    this.$emit('next')
+  }
+  }
+}
 </script>
 
 <style scoped>
@@ -49,7 +71,7 @@ const tripDays = computed(() => {  // 일수 계산
 }
   
 
-#day_section {
+.article_section {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;

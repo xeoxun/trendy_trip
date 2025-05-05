@@ -4,11 +4,10 @@
       <p>이번 여행, 어디로 떠나볼까요?</p>
       <h3>가고 싶은 지역을 선택해주세요</h3>
     </div>
-    <div id="area_section">
-      <button class="area_btn" v-for="area in areas" :key="area">
+    <div class="article_section">
+      <button class="area_btn" v-for="area in areas" :key="area" @click="setArea(area)" :class="{ selected: selectedArea === area }">
         {{ area }} 
       </button>
-      <VCalendar />
     </div>
     <footer>
       <button id="next_btn" @click="$emit('next')">다음</button>
@@ -17,16 +16,27 @@
 </template>
 
 <script>
+// import '@/assets/userSection.css';
+import  { useDataStore } from '@/store/data'
+
 export default {
   data() {
     return {
       areas: [
-        "서울", "경기\n인천", "충청", "강원",
+        "서울", "경기/인천", "충청", "강원",
         "경상", "전라", "제주", "부산",
         "대구", "광주", "대전", "세종"
       ],
+      selectedArea: ''
     };
   },
+  methods: {
+    setArea(area) {
+      const data = useDataStore();
+      data.setArea(area);
+      this.selectedArea = area; // ✅ 현재 선택된 지역 업데이트
+    }
+  }
 };
 </script>
 
@@ -47,7 +57,7 @@ export default {
   justify-content: center;
 }
 
-#area_section {
+.article_section {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;

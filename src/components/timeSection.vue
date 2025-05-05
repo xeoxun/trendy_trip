@@ -4,7 +4,7 @@
       <p> 미리 계획한 여행 장소가 있나요? </p>
       <h3> 여행 장소를 입력해주세요 </h3>
     </div>
-    <div id="time_section">
+    <div class="article_section">
 
     </div>
     <footer>
@@ -14,6 +14,10 @@
   </div>
 </template>
 
+
+<!-- <script setup>
+import '@/assets/userSection.css';
+</script> -->
 
 <style scoped>
 .section {
@@ -33,7 +37,7 @@
   justify-content: center;
 }
   
-#time_section {
+.article_section {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
