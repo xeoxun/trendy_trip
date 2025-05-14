@@ -2,7 +2,7 @@
   <div class="section">
     <div class="title">
       <p>몇일 일정의 여행을 계획하고 계신가요?</p>
-      <h3>여행 날짜를 선택해주세요</h3>
+      <h3>📆 여행 날짜를 선택해주세요</h3>
     </div>
     <div class="article_section">
       <VDatePicker v-model.range="range" mode="date" />
@@ -17,6 +17,7 @@
 
 <script>
 import { useDataStore } from '@/store/data'
+import { initSchedule } from '@/store/api'
 
 export default {
   data() {
@@ -37,9 +38,9 @@ export default {
     }
   },
   methods: {
-    saveDates() {
+    async saveDates() {
     const data = useDataStore()
-
+    
     const formatDate = (date) => {
       return new Date(date).toISOString().slice(0, 10)
     }
@@ -49,7 +50,46 @@ export default {
     data.setTripDay(this.tripDays)
 
     this.$emit('next')
-  }
+
+    const payload = {
+        date: {
+          user_id: '2',
+          start_date: formatDate(this.range.start),
+          end_date: formatDate(this.range.end)
+        },
+        start_end: {
+          arrival: "제주공항",
+          arrivaltime: "09:00",
+          departure: "제주공항",
+          departuretime: "18:00"
+        },
+        user: {
+          start_time: "09:00",
+          end_time: "18:00",
+          travel_style: "편안한",
+          meal_time_preferences: {
+            breakfast: ["08:00"],
+            lunch: ["12:30"],
+            dinner: ["18:30"]
+          }
+        },
+        places_by_day: {
+          [formatDate(this.range.start)]: [{ name: "우무" }]
+        }
+      };
+
+      console.log("보내는 payload ↓↓↓");
+      console.log(JSON.stringify(payload, null, 2))
+
+      try {
+        await initSchedule(payload)
+        alert('일정 저장 완료')
+        this.$emit('next')
+      } catch (e) {
+        alert('일정 저장 실패')
+        console.error(e)
+      }
+    }
   }
 }
 </script>
@@ -73,9 +113,11 @@ export default {
 
 .article_section {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 10px;
+  width: 100%;
 }
   
 footer {
@@ -84,6 +126,7 @@ footer {
   justify-content: space-between;
   align-items: center;
   padding: 20px;
+  max-height: 10%;
 }
   
 #before_btn, #next_btn {

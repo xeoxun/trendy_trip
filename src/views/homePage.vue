@@ -11,7 +11,6 @@
   </div>
 </template>
 
-
 <style>
 #start_section {
   height: 100%;

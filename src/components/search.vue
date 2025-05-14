@@ -1,7 +1,8 @@
 <template>
   <div id="pop">
     <header>
-      <h3>🔎 장소를 검색해주세요</h3>
+      <p> 미리 계획해 둔 명소가 있나요?</p>
+      <h3>🔎장소를 검색해주세요</h3>
       <input
         v-model="searchQuery"
         type="text"
@@ -12,7 +13,7 @@
 
     <article id="place_list">
       <ul>
-        <li v-for="place in filteredPlaces" :key="place">{{ place }}</li>
+        <li v-for="place in filteredPlaces" :key="place" id="recommand_place">{{ place }}</li>
       </ul>
     </article>
 
@@ -49,40 +50,42 @@ export default {
 #pop {
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  margin: 10px;
   width: 300px;
   height: 90%;
   background-color: white;
   border: 3px solid skyblue;
   border-radius: 10px;
   position: absolute;
+  overflow: hidden; /* 내부 요소가 벗어나지 않도록 */
 }
 
 header {
-  flex: 0 0 auto;
   width: 100%;
+  flex: 0 0 10%;
   padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
 }
 
 #search_input {
-  padding: 8px;
+  padding: 10px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid skyblue;
   font-size: 16px;
 }
 
 #place_list {
   width: 100%;
   height: 70%;
+  margin: 10px;
   overflow-y: auto;
 }
 
 #place_list ul {
+  width: 100%;
   list-style: none;
-  padding: 0;
+  padding: 10px;
 }
 
 #place_list li {
@@ -91,7 +94,7 @@ header {
 }
 
 footer {
-  flex: 0 0 auto;
+  flex: 0 0 10%;
   width: 100%;
   display: flex;
   justify-content: flex-end;
