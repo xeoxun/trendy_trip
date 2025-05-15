@@ -1,11 +1,12 @@
-#models\main_restaurant.py
+#models/jeju_restaurant.py
 from sqlalchemy import Column, Integer, String, Float, Text, DECIMAL
 from app.database import Base
 
-class jeju_restaurant(Base):
+class JejuRestaurant(Base):
     __tablename__ = "jeju_restaurant"
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    restaurant_id = Column(Integer, primary_key=True, autoincrement=True)
+
     name = Column(String(255))
     category = Column(String(255))
     page_url = Column(Text)
@@ -21,31 +22,21 @@ class jeju_restaurant(Base):
     break_time = Column(String(255))
     service_time = Column(String(255))
     closed_days = Column(String(255))
+    image_url = Column(Text)
 
+    @property
+    def id(self):
+        return self.restaurant_id
+    
     class Config:
         orm_mode = True
 
-class JejuRestaurantImage(Base):
-    __tablename__ = "jeju_restaurant_image"
+class JejurestaurantHashtag(Base):
+    __tablename__ = "jeju_restaurant_hashtags"  
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(255))  # jeju_restaurant.name과 연동 키
-    url_1 = Column(String(500))
-    url_2 = Column(String(500))
-    url_3 = Column(String(500))
-    url_4 = Column(String(500))
-    url_5 = Column(String(500))
-    url_6 = Column(String(500))
-
-    class Config:
-        orm_mode = True
-
-class JejuRestaurantHashtag(Base):
-    __tablename__ = "jeju_restaurant_hashtags"
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String)
-    hashtag_name = Column(String)
+    restaurant_id = Column(Integer, primary_key=True)
+    name = Column(String(255))
+    hashtag_name = Column(Text)  
 
     class Config:
         orm_mode = True

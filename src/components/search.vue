@@ -1,7 +1,7 @@
 <template>
   <div id="pop">
     <header>
-      <p> 미리 계획해 둔 명소가 있나요?</p>
+      <p> 어떤 관광명소를 찾고 계시나요?</p>
       <h3>🔎장소를 검색해주세요</h3>
       <input
         v-model="searchQuery"
@@ -11,12 +11,16 @@
       />
     </header>
 
-    <article id="place_list">
+    <article id="place_list" v-if="!selectedPlace">
       <ul>
-        <li v-for="place in filteredPlaces" :key="place" id="recommand_place">{{ place }}</li>
+        <li 
+          v-for="(place, index) in filteredPlaces" 
+          :key="index" 
+          @click="selectPlace(place)">
+          {{ place.places.name }}
+        </li>
       </ul>
     </article>
-
     <footer>
       <button id="close_btn" @click="$emit('close')">닫기❌</button>
     </footer>
@@ -24,23 +28,31 @@
 </template>
 
 <script>
+import placesData from '@/store/test_data.js'
+
 export default {
-  name: 'Search_',
-  props: {
-    days: String,
-    date: String,
-  },
+  name: 'SearchPop',
+
   data() {
     return {
       searchQuery: '',
-      places: ['카페', '맛집', '공원', '박물관', '쇼핑몰', '해변', '산책로'], // 예시 장소
+      places: placesData,
+      selectedPlace: null,  // 선택된 장소 저장 변수
     };
   },
   computed: {
     filteredPlaces() {
-      return this.places.filter(place =>
-        place.includes(this.searchQuery.trim())
+      if (!this.searchQuery) {
+        return this.places;
+      }
+      return this.places.filter((place) =>
+        place.name.includes(this.searchQuery)
       );
+    },
+  },
+  methods: {
+    selectPlace(place) {
+      this.$emit('select-place', place.places);
     },
   },
 };
@@ -57,7 +69,7 @@ export default {
   border: 3px solid skyblue;
   border-radius: 10px;
   position: absolute;
-  overflow: hidden; /* 내부 요소가 벗어나지 않도록 */
+  overflow: hidden;
 }
 
 header {
@@ -91,6 +103,18 @@ header {
 #place_list li {
   padding: 8px;
   border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.place-detail {
+  padding: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.place-image {
+  width: 100px;
+  height: 100px;
+  margin: 5px;
 }
 
 footer {

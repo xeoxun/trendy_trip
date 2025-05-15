@@ -41,25 +41,5 @@ export const useDataStore = defineStore('data', {
       this.startTime = stime,
       this.endTime = etime
     },
-    addPlaceToDay(day, name, address, time) {
-      const dayPlan = this.dayPlans.find(plan => plan.day === day);
-      if (dayPlan) {
-        dayPlan.places.push({ name, address, time });
-      } else {
-        // 만약 dayPlan이 없다면 생성
-        this.dayPlans.push({
-          day: day,
-          places: [{ name, address, time }]
-        });
-      }
-    },
-
-    // 장소 삭제 메서드
-    removePlaceFromDay(day, index) {
-      const dayPlan = this.dayPlans.find(plan => plan.day === day);
-      if (dayPlan) {
-        dayPlan.places.splice(index, 1);
-      }
-    }
   }
 });

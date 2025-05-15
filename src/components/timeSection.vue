@@ -8,16 +8,32 @@
       <div id="start_info"> 
         <h4> ✈️ 출발 장소 및 시간 입력 </h4>
         <p> {{ startDay }} </p>
-        <input v-model="startPlace" type="text" placeholder="여행 시작할 장소를 입력하세요" id="start_input" />
+        <form id="start_input">
+          <label>
+            <input v-model="startPlace" type="radio" value="제주국제공항" /> 제주국제공항
+          </label>
+          <label>
+            <input v-model="startPlace" type="radio" value="제주국제여객터미널" /> 제주국제여객터미널
+          </label>
+        </form> 
         <input v-model="startTime" type="time" id="start_time" />
       </div>
+
       <div id="end_info">
         <h4> ✈️ 마지막 장소 및 시간 입력 </h4>
         <p> {{ endDay }} </p>
-        <input v-model="endPlace" type="text" placeholder="여행을 마무리할 장소를 입력하세요" id="end_input" />
+        <form id="end_input">
+          <label>
+            <input v-model="endPlace" type="radio" value="제주국제공항" /> 제주국제공항
+          </label>
+          <label>
+            <input v-model="endPlace" type="radio" value="제주국제여객터미널" /> 제주국제여객터미널
+          </label>
+        </form> 
         <input v-model="endTime" type="time" id="end_time" />
       </div>
     </div>
+
     <footer>
       <button id="before_btn" @click="$emit('prev')"> 이전 </button> 
       <RouterLink id="ok_btn" to="/main" @click="saveData"> 확인 </RouterLink>  
@@ -29,8 +45,16 @@
 import { useDataStore } from '@/store/data'
 
 export default {
+  data() {
+    return {
+      startPlace: '',
+      startTime: '',
+      endPlace: '',
+      endTime: ''
+    };
+  },
   setup() {
-    const data = useDataStore()
+    const data = useDataStore();
 
     return {
       startDay: data.startDate,
@@ -39,8 +63,8 @@ export default {
   },
   methods: {
     saveData() {
-      const data = useDataStore()
-      data.setUserPlan(this.startPlace, this.startTime, this.endPlace, this.endTime)
+      const data = useDataStore();
+      data.setUserPlan(this.startPlace, this.startTime, this.endPlace, this.endTime);
     }
   }
 };
@@ -54,25 +78,25 @@ export default {
   display: flex;
   flex-direction: column;
 }
-  
+
 .title {
   display: flex;
   padding: 20px;
   flex-direction: column;
 }
-  
+
 .article_section {
   display: flex;
   flex-direction: column;
-  max-height: 90%;
+  max-height: 80%;
   padding: 30px;
   width: 100%;
   box-sizing: border-box;
 }
 
 .article_section p, h4 {
-  margin: 0; /* 위아래 여백을 모두 제거 */
-  padding: 0; /* 추가적인 패딩도 제거 */
+  margin: 0;
+  padding: 0;
 }
 
 #start_input,
@@ -94,7 +118,7 @@ footer {
   align-items: center;
   padding: 20px;
 }
-  
+
 #before_btn {
   padding: 10px 20px;
   border-radius: 20px;
@@ -102,7 +126,7 @@ footer {
   border: none;
   cursor: pointer;
 }
-  
+
 #ok_btn {
   padding: 10px 20px;
   border-radius: 20px;

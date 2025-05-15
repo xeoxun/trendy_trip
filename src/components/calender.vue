@@ -12,7 +12,7 @@
     <article id ="choose">
       <hr style="border: 1px solid skyblue; width: 80%; margin: 20px auto;">
       
-      <div v-if="getDayPlan(selectedDay).length">
+      <!-- <div v-if="getDayPlan(selectedDay).length">
         <ul>
           <li v-for="(place, index) in getDayPlan(selectedDay)" :key="index">
             <p>🚩 {{ place.name }} - {{ place.time }}</p>
@@ -21,7 +21,7 @@
       </div>
       <div v-else>
         <p>⛔ 해당 날짜의 장소 정보가 없습니다.</p>
-      </div>
+      </div> -->
     </article>
     <footer>
       <button id = "close_btn"> 닫기❌ </button>

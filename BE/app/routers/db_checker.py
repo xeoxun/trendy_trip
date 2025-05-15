@@ -3,16 +3,18 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.models.jeju_cafe import jeju_Cafe
-from app.models.jeju_restaurant import jeju_restaurant
-from app.models.jeju_tourism import jeju_tourism
+from app.models.jeju_cafe import JejuCafe
+from app.models.jeju_restaurant import JejuRestaurant
+from app.models.jeju_tourism import JejuTourism
+from app.models.jeju_hotel import JejuHotel
 
 router = APIRouter(prefix="/api/db", tags=["DB Checker"])
 
 PLACE_MODELS = {
-    "cafe": jeju_Cafe,
-    "restaurant": jeju_restaurant,
-    "tourism": jeju_tourism
+    "cafe": (JejuCafe),
+    "restaurant": (JejuRestaurant),
+    "tourism": (JejuTourism),
+    "hotel": (JejuHotel)
 }
 
 @router.get("/check_place")

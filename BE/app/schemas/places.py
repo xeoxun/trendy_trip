@@ -1,3 +1,4 @@
+#schemas/places.py
 from pydantic import BaseModel
 from typing import List, Optional, Dict
 
@@ -12,14 +13,12 @@ class PlaceEditInput(BaseModel):
 class PlaceEditOutput(BaseModel):
     places_by_day: Dict[str, List[PlaceNameOnly]]
 
-
 # ------------------- /api/places/search -------------------
 class PlaceSearchResult(BaseModel):
     name: str
 
 class PlaceSearchOutput(BaseModel):
     search: List[PlaceSearchResult]
-
 
 # ------------------- /api/places/data -------------------
 class PlaceDataResult(BaseModel):
@@ -39,3 +38,15 @@ class PlaceDataResult(BaseModel):
 
 class PlaceDataResponse(BaseModel):
     places: PlaceDataResult
+
+class PlaceDetailOutput(BaseModel):
+    name: str
+    address: str
+    phone: Optional[str] = None
+    convenience: Optional[str] = None
+    category: Optional[str] = None
+    website: Optional[str] = None
+    business_hours: Optional[str] = None
+    open_time: Optional[str] = None
+    close_time: Optional[str] = None
+    image_urls: List[str] = []

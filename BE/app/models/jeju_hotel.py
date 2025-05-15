@@ -1,11 +1,11 @@
-#models/jeju_tourism.py
+#models/jeju_hotel.py
 from sqlalchemy import Column, Integer, String, Float, Text, DECIMAL
 from app.database import Base
 
-class JejuTourism(Base):
-    __tablename__ = "jeju_tourism"
+class JejuHotel(Base):
+    __tablename__ = "jeju_hotel"
 
-    tourism_id = Column(Integer, primary_key=True, autoincrement=True)
+    hotel_id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255))
     category = Column(String(255))
     page_url = Column(Text)
@@ -25,15 +25,15 @@ class JejuTourism(Base):
 
     @property
     def id(self):
-        return self.tourism_id
-    
+        return self.hotel_id
+
     class Config:
         orm_mode = True
 
-class JejutourismHashtag(Base):
-    __tablename__ = "jeju_tourism_hashtags"  
+class JejuhotelHashtag(Base):
+    __tablename__ = "jeju_hotel_hashtags"  
 
-    tourism_id = Column(Integer, primary_key=True)
+    hotel_id = Column(Integer, primary_key=True)
     name = Column(String(255))
     hashtag_name = Column(Text)  
 
