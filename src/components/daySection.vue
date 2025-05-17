@@ -6,7 +6,7 @@
     </div>
     <div class="article_section">
       <VDatePicker v-model.range="range" mode="date" />
-      <p> 총: {{ tripDays }}일 </p>
+      <p style="margin: 0" > 총: {{ tripDays }}일 </p>
     </div>
     <footer>
       <button id="before_btn" @click="$emit('prev')"> 이전 </button>

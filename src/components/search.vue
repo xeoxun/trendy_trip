@@ -12,6 +12,7 @@
     </header>
 
     <article id="place_list" v-if="!selectedPlace">
+      <p> ✅ 추천 장소</p>
       <ul>
         <li 
           v-for="(place, index) in filteredPlaces" 
@@ -80,6 +81,10 @@ header {
   flex-direction: column;
 }
 
+header input{
+  width: 85%;
+}
+
 #search_input {
   padding: 10px;
   border-radius: 8px;
@@ -95,7 +100,7 @@ header {
 }
 
 #place_list ul {
-  width: 100%;
+  width: 85%;
   list-style: none;
   padding: 10px;
 }
@@ -120,6 +125,7 @@ header {
 footer {
   flex: 0 0 10%;
   width: 100%;
+  margin-right: 20px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -127,8 +133,7 @@ footer {
 
 #close_btn {
   padding: 10px;
-  border-radius: 20px;
-  background-color: #dce9f5;
+  background-color: white;
   border: none;
   cursor: pointer;
 }

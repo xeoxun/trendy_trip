@@ -1,6 +1,6 @@
 <template>
   <div id="pop">
-    <header> <!-- 팝업의 헤더 -->
+    <header>
       <h2 id="place_name"> 
         <a :href="'https://www.instagram.com/explore/search/keyword/?q=' + encodeURIComponent(place.name)" 
           target="_blank" 
@@ -28,7 +28,7 @@
       </div>
      </article> 
     <footer>
-      <button id = "add_place"> 추가➕ </button>
+      <button id = "add_place" @click="addPlace"> 추가➕ </button>
       <button id = "close_btn" @click="$emit('close')"> 닫기❌ </button>
     </footer>
   </div>
@@ -41,6 +41,11 @@
       place: {
         type: Object,
         required: true
+      }
+    },
+    method: {
+      addPlace() {
+        //id 전달
       }
     }
   }
@@ -130,7 +135,7 @@ footer {
 #close_btn {
   background-color: white; /* 버튼 배경색 */
   border: none; /* 테두리 제거 */
-  padding: 8px 12px; /* 패딩 추가 */
+  padding: 10px 10px 10px 10px;
   cursor: pointer; /* 커서 변경 */
 }
 </style>

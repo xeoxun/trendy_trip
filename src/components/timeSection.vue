@@ -6,7 +6,7 @@
     </div>
     <div class="article_section">
       <div id="start_info"> 
-        <h4> ✈️ 출발 장소 및 시간 입력 </h4>
+        <h3> ✈️ 출발 장소 및 시간 입력 </h3>
         <p> {{ startDay }} </p>
         <form id="start_input">
           <label>
@@ -19,8 +19,10 @@
         <input v-model="startTime" type="time" id="start_time" />
       </div>
 
+      <br>
+
       <div id="end_info">
-        <h4> ✈️ 마지막 장소 및 시간 입력 </h4>
+        <h3> ✈️ 마지막 장소 및 시간 입력 </h3>
         <p> {{ endDay }} </p>
         <form id="end_input">
           <label>
@@ -82,10 +84,12 @@ export default {
 .title {
   display: flex;
   padding: 20px;
+  max-height: 15%;
   flex-direction: column;
 }
 
 .article_section {
+  flex: 0 0 70; 
   display: flex;
   flex-direction: column;
   max-height: 80%;
@@ -94,7 +98,7 @@ export default {
   box-sizing: border-box;
 }
 
-.article_section p, h4 {
+.article_section p, h3 {
   margin: 0;
   padding: 0;
 }
@@ -103,7 +107,7 @@ export default {
 #start_time,
 #end_input,
 #end_time {
-  width: 100%;
+  width: 95%;
   padding: 10px;
   margin: 5px 0;
   border: 1px solid skyblue;

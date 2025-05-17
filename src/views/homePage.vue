@@ -53,7 +53,6 @@
   border: none;
   cursor: pointer;
   color:black;
-  min-width: 160px;           /* 최소 너비 지정 (선택사항) */
   text-decoration: none;
 }
 

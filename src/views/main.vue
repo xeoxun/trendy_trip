@@ -32,7 +32,7 @@
 
     <!-- 팝업 슬라이딩 애니메이션 -->
     <transition name="slide-popup">
-      <CalPop v-if="isCalendarPopupVisible" class="popup-panel" @close="calendar_Popup" />
+      <CalPop v-if="isCalendarPopupVisible" class="popup-panel" @close="calendar_Popup" @select-day="handleSelectDay"/>
     </transition>
     <transition name="slide-popup">
       <SearchPop v-if="isSearchPopupVisible" class="popup-panel" @close="search_Popup" @select-place="handleSelectPlace"/>
@@ -42,7 +42,8 @@
     </transition>
 
     <PlacePop 
-      v-if="isPlacePopupVisible" 
+      v-if="isPlacePopupVisible"
+      :key="selectedPlace?.name" 
       :place="selectedPlace"
       :style="popupStyle"
       @close="handleClosePlace"
@@ -76,6 +77,9 @@ export default {
       isSearchPopupVisible: false, // 검색 팝업 상태 관리
       isSavePopupVisible: false,
       isPlacePopupVisible: false,
+      map: null,
+      markers: [], // 지도에 표시할 마커들
+      selectedCoordinates: [] // 선택된 Day의 좌표 배열
     };
   },
   methods: {
@@ -130,6 +134,7 @@ export default {
     handleSelectPlace(place) {
       this.selectedPlace = place;
       this.isPlacePopupVisible = true;
+
       this.popupStyle = {
           position: 'absolute',
           top: `30px`,
@@ -140,6 +145,71 @@ export default {
     handleClosePlace() {
       this.selectedPlace = null; // 장소 팝업만 닫기
       this.isPlacePopupVisible = false;
+    },
+    // SVG로 숫자 마커 아이콘 생성 함수
+    createNumberMarkerIcon(number) {
+      const svg = `
+        <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="20" r="18" fill="skyblue" />
+          <text x="20" y="26" font-size="18" font-family="Arial" fill="white" font-weight="bold" text-anchor="middle">${number}</text>
+        </svg>
+      `;
+      return 'data:image/svg+xml;base64,' + btoa(svg);
+    },
+    handleSelectDay(coordinates) {
+      console.log("선택된 Day의 장소 좌표:", coordinates);
+      this.selectedCoordinates = coordinates;
+
+      // 기존 마커들 지도에서 제거
+      this.markers.forEach(marker => marker.setMap(null));
+      this.markers = [];
+
+      if (this.polyline) {
+        this.polyline.setMap(null);
+      }
+
+      coordinates.forEach(({ x, y }, index) => {
+        const iconUrl = this.createNumberMarkerIcon(index + 1)
+
+        const marker = new window.naver.maps.Marker({
+          position: new window.naver.maps.LatLng(y, x), // y=위도, x=경도 순으로 넣기
+          map: this.map,
+          icon: {
+            url: iconUrl,
+            size: new window.naver.maps.Size(40, 40),
+            origin: new window.naver.maps.Point(0, 0),
+            anchor: new window.naver.maps.Point(20, 20), // 아이콘 중심점
+          }
+        });
+        this.markers.push(marker);
+      });
+
+      const path = coordinates.map(({ x, y }) => new window.naver.maps.LatLng(y, x));
+
+      // 폴리라인 생성
+      this.polyline = new window.naver.maps.Polyline({
+        map: this.map,
+        path: path,
+        strokeColor: 'skyblue',
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+      }); 
+    },
+    logMapBounds(map) {
+      const bounds = map.getBounds();
+      const sw = bounds.getSW(); // 좌하단
+      const ne = bounds.getNE(); // 우상단
+
+      // 네 꼭짓점 좌표 계산
+      const topLeft = { lat: ne.lat(), lng: sw.lng() };
+      const topRight = { lat: ne.lat(), lng: ne.lng() };
+      const bottomLeft = { lat: sw.lat(), lng: sw.lng() };
+      const bottomRight = { lat: sw.lat(), lng: ne.lng() };
+
+      console.log("Top Left:", topLeft);
+      console.log("Top Right:", topRight);
+      console.log("Bottom Left:", bottomLeft);
+      console.log("Bottom Right:", bottomRight);
     }
   },
   mounted() {
@@ -151,10 +221,13 @@ export default {
     document.head.appendChild(script);
 
     script.onload = () => {
-      // 네이버 지도 생성
-      new window.naver.maps.Map("map", {
+      this.map = new window.naver.maps.Map("map", {
         center: new window.naver.maps.LatLng(33.4, 126.55), 
-        zoom: 11,
+        zoom: 11
+      });
+
+      new window.naver.maps.Event.addListener(this.map, "idle", () => {
+          this.logMapBounds(this.map);
       });
     };
   }

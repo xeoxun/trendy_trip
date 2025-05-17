@@ -52,8 +52,7 @@ footer {
 
 #close_btn {
   padding: 10px 10px 10px 10px;
-  border-radius: 20px;
-  background-color: #dce9f5;
+  background-color: white;
   border: none;
   cursor: pointer;
 }

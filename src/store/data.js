@@ -16,9 +16,6 @@ export const useDataStore = defineStore('data', {
   
   // getters (선택사항)
   getters: {
-    getDayPlan: (state) => (day) => {
-      return state.dayPlans.find(plan => plan.day === day)?.places || []
-    }
   },
 
   // actions (상태 변경 메서드)

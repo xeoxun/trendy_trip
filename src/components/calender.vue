@@ -1,41 +1,47 @@
 <template>
   <div id="pop">
-    <header> <!-- 팝업의 헤더 -->
+    <header>
       <h2> {{ trip_area }}여행 </h2>
       <p> {{ startDay }} ~ {{ endDay }} </p>
       <p> 총 {{ tripday }}일 </p>
-      <select>
-        <option v-for="n in tripday" :key="n"> Day {{ n }} </option>
+      <select v-model="selectedDay" @change="SelectedDay">
+        <option v-for="n in tripday" :key="n" :value="n - 1"> Day {{ n }} </option>
       </select>
     </header>
     
-    <article id ="choose">
+    <article id="choose">
       <hr style="border: 1px solid skyblue; width: 80%; margin: 20px auto;">
-      
-      <!-- <div v-if="getDayPlan(selectedDay).length">
-        <ul>
-          <li v-for="(place, index) in getDayPlan(selectedDay)" :key="index">
-            <p>🚩 {{ place.name }} - {{ place.time }}</p>
-          </li>
-        </ul>
-      </div>
-      <div v-else>
-        <p>⛔ 해당 날짜의 장소 정보가 없습니다.</p>
-      </div> -->
+
+      <ul v-if="currentVisits.length > 0">
+        <li v-for="visit in currentVisits" :key="visit.order">
+          <strong class="visit_num">{{ visit.order }} </strong> <span>{{ visit.place }}</span>
+          <p> 이동시간: {{ visit.arrival_str }} ~  {{  visit.departure_str }}</p>
+          <p> 체류시간: {{ visit.stay_duration }}</p>
+          <hr style="border: 1px solid skyblue; width: 90%; margin-right: 30px;">
+        </li>
+      </ul>
+      <p v-else>선택된 일차에 방문지가 없습니다.</p>
     </article>
+
     <footer>
-      <button id = "close_btn"> 닫기❌ </button>
+      <button id="close_btn" @click="$emit('close')"> 닫기❌ </button>
     </footer>
   </div>
 </template>
 
 <script>
 import { useDataStore } from '@/store/data'
+import calendarData from '@/store/test_calendar.js'
 
 export default {
   name: 'CalPop',
+  data() {
+    return {
+      selectedDay: 0, // 기본 Day 1 선택
+    };
+  },
   setup() {
-    const data = useDataStore()
+    const data = useDataStore();
 
     return {
       trip_area: data.area,
@@ -43,9 +49,33 @@ export default {
       endDay: data.endDate,
       tripday: data.TripDays
     }
+  },
+  computed: {
+    // 현재 선택된 day의 방문지 배열을 반환
+    currentVisits() {
+      // calendarData가 배열이고 각 원소에 visits 배열 있음
+      if (!calendarData || !Array.isArray(calendarData)) return [];
+      if (!calendarData[this.selectedDay]) return [];
+      return calendarData[this.selectedDay].visits || [];
+    }
+  },
+  methods: {
+    SelectedDay() {
+      console.log(`선택된 옵션: Day ${this.selectedDay + 1}`);
+
+      const visits = this.currentVisits;
+      const coordinates = visits.map((visit) => ({
+        x: visit.x_cord,
+        y: visit.y_cord,
+      }));
+
+      // main.vue로 좌표 전달
+      this.$emit("select-day", coordinates);
+    }
   }
-}
+};
 </script>
+
 
 <style scoped>
 #pop {
@@ -69,6 +99,8 @@ header {
 #choose {
   width: 100%;
   height: 80%;
+  margin-top: 10px;
+  overflow-y: auto; /* 스크롤 추가 */
 }
 
 select {
@@ -78,18 +110,45 @@ select {
   font-size: 14px;
 }
 
+.visit_num {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 24px;
+  height: 24px;
+  background-color: skyblue;
+  color: white;
+  border-radius: 50%;
+  font-size: 14px;
+  margin-right: 8px;
+}
+
+ul {
+  margin: 0;
+  padding-left: 20px; /* 기본 들여쓰기 제거 */
+}
+
+li {
+  list-style-type: none; /* 앞의 점 없애기 */
+  margin-bottom: 8px; /* 아이템 간 간격 */
+}
+
+li p {
+  margin:0;
+  color: gray;
+}
+
 footer {
   height: 10%;
   width: 100%;
   display: flex;
-  justify-content: flex-end; /* 👉 우측 정렬 */
-  align-items: center; /* 수직 정렬 */
+  justify-content: flex-end;
+  align-items: center;
 }
 
 #close_btn {
   padding: 10px 10px 10px 10px;
-  border-radius: 20px;
-  background-color: #dce9f5;
+  background-color: white;
   border: none;
   cursor: pointer;
 }
