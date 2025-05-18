@@ -22,6 +22,7 @@
     </article>
 
     <footer>
+      <button id="remove_btn" @click="removePlace"> 삭제⛔ </button>
       <button id="close_btn" @click="$emit('close')"> 닫기❌ </button>
     </footer>
   </div>
@@ -58,6 +59,9 @@ export default {
       return calendarData[this.selectedDay].visits || [];
     }
   },
+    mounted() {
+    this.SelectedDay(); // 컴포넌트가 생성되면 Day 1의 방문 목록이 기본으로 표시됨
+  },
   methods: {
     SelectedDay() {
       console.log(`선택된 옵션: Day ${this.selectedDay + 1}`);
@@ -83,6 +87,9 @@ export default {
       } else {
         console.warn("일치하는 장소 정보를 찾을 수 없습니다.");
       }
+    },
+    removePlace() {
+        this.$emit('open-remove-place');
     }
   }
 };
@@ -160,10 +167,11 @@ footer {
   height: 10%;
   width: 100%;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
 }
 
+#remove_btn,
 #close_btn {
   padding: 10px 10px 10px 10px;
   background-color: white;

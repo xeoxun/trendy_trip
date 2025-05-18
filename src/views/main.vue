@@ -32,7 +32,12 @@
 
     <!-- 팝업 슬라이딩 애니메이션 -->
     <transition name="slide-popup">
-      <CalPop v-if="isCalendarPopupVisible" class="popup-panel" @close="calendar_Popup" @select-day="handleSelectDay" @get-place-info="displayPlaceInfo"/>
+      <CalPop v-if="isCalendarPopupVisible" class="popup-panel" 
+        @close="calendar_Popup" 
+        @select-day="handleSelectDay" 
+        @get-place-info="displayPlaceInfo"
+        @open-remove-place="openRemovePlace"
+        />
     </transition>
     <transition name="slide-popup">
       <SearchPop v-if="isSearchPopupVisible" class="popup-panel" @close="search_Popup" @select-place="handleSelectPlace"/>
@@ -51,12 +56,16 @@
     />
 
     <AddPlacePop v-if="isAddPlaceVisible" :style="AddPlaceStyle" @close="isAddPlaceVisible = false"/>
-
+    <RemovePlacePop v-if="isRemovePlaceVisible" :style="RemovePlaceStyle" @close="isRemovePlaceVisible = false" />
+    
     <div id="category_btn">
-      <button class="category-button" @click="openHashtag">관광명소</button>
-      <button class="category-button" @click="openHashtag">카페</button>
-      <button class="category-button" @click="openHashtag">음식점</button>
+      <button class="category-button" @click="openHashtag"> 관광명소 </button>
+      <button class="category-button" @click="openHashtag"> 카페 </button>
+      <button class="category-button" @click="openHashtag"> 음식점 </button>
+      <button class="category-button" @click="openHashtag"> 숙소 </button>
     </div>
+
+    <HashtagButton v-if="showHashtag" class="hashtag-container" />
   </div>
 </template>
 
@@ -65,7 +74,10 @@ import CalPop from '@/components/calender.vue'  // 일정 표
 import SearchPop from '@/components/search.vue'  // 장소 검색
 import SavePop from '@/components/save_file.vue'  // 파일 저장장
 import PlacePop from '@/components/place.vue'
+
 import AddPlacePop from '@/components/addPlace.vue'
+import RemovePlacePop from '@/components/removePlace.vue'
+import HashtagButton from '@/components/hashtag.vue';
 
 export default {
   name: 'MainPage',
@@ -74,7 +86,9 @@ export default {
     CalPop,
     SavePop,
     PlacePop,
-    AddPlacePop
+    AddPlacePop,
+    RemovePlacePop,
+    HashtagButton
   },
   data() {
     return {
@@ -84,9 +98,11 @@ export default {
       isSavePopupVisible: false,
       isPlacePopupVisible: false,
       isAddPlaceVisible: false,
+      isRemovePlaceVisible: false,
       map: null,
       markers: [], // 지도에 표시할 마커들
-      selectedCoordinates: [] // 선택된 Day의 좌표 배열
+      selectedCoordinates: [], // 선택된 Day의 좌표 배열
+      showHashtag: false // 해시태그 출력력
     };
   },
   methods: {
@@ -95,6 +111,8 @@ export default {
       this.isSearchPopupVisible = false;
       this.isSavePopupVisible = false;
       this.isPlacePopupVisible = false;
+      this.isAddPlaceVisible = false;
+      this.isRemovePlaceVisible =  false;
     },
     calendar_Popup() {
       if (this.isCalendarPopupVisible) {
@@ -227,21 +245,19 @@ export default {
         zIndex: 1000
       };
     },
-    openHashtag(map) {
-      const bounds = map.getBounds();
-      const sw = bounds.getSW(); // 좌하단
-      const ne = bounds.getNE(); // 우상단
+    openHashtag() {
+      this.showHashtag = !this.showHashtag;
 
-      // 네 꼭짓점 좌표 계산
-      const topLeft = { lat: ne.lat(), lng: sw.lng() };
-      const topRight = { lat: ne.lat(), lng: ne.lng() };
-      const bottomLeft = { lat: sw.lat(), lng: sw.lng() };
-      const bottomRight = { lat: sw.lat(), lng: ne.lng() };
+      if (this.map) {
+        const bounds = this.map.getBounds();
+        const sw = bounds.getSW();
+        const ne = bounds.getNE();
 
-      console.log("Top Left:", topLeft);
-      console.log("Top Right:", topRight);
-      console.log("Bottom Left:", bottomLeft);
-      console.log("Bottom Right:", bottomRight);
+        console.log("Top Left:", { lat: ne.lat(), lng: sw.lng() });
+        console.log("Top Right:", { lat: ne.lat(), lng: ne.lng() });
+        console.log("Bottom Left:", { lat: sw.lat(), lng: sw.lng() });
+        console.log("Bottom Right:", { lat: sw.lat(), lng: ne.lng() });
+      }
     },
     openAddPlace() {
       this.isAddPlaceVisible = true;
@@ -253,6 +269,16 @@ export default {
         zIndex: 1000
       };
     },
+    openRemovePlace() {
+      this.isRemovePlaceVisible = true;
+
+      this.RemovePlaceStyle = {
+        position: 'absolute',
+        top: '30px',
+        left: '420px',
+        zIndex: 1000
+      };
+    }
   },
   mounted() {
     // 네이버 지도 API 스크립트 로드
@@ -266,10 +292,6 @@ export default {
       this.map = new window.naver.maps.Map("map", {
         center: new window.naver.maps.LatLng(33.4, 126.55), 
         zoom: 11
-      });
-
-      new window.naver.maps.Event.addListener(this.map, "idle", () => {
-          this.openHashtag(this.map);
       });
     };
   }
@@ -346,16 +368,39 @@ body {
 }
 
 .category-button {
-  padding: 10px 15px; /* 패딩 */
-  background-color: skyblue; /* 배경색 */
+  width: 80px; /* 너비 (원 크기) */
+  height: 80px; /* 높이 (원 크기) */
+  padding: 0; /* 패딩 제거 */
+  background-color: rgba(73, 210, 255, 0.5); /* 배경색 */
   color: white; /* 글자색 */
-  border: none; /* 테두리 제거 */
-  border-radius: 5px; /* 모서리 둥글게 */
+  border: 2px solid white; /* 테두리 제거 */
+  border-radius: 50%; /* 동그라미 모양 */
   cursor: pointer; /* 커서 변경 */
+  display: flex; /* 내용 가운데 정렬 */
+  align-items: center;
+  justify-content: center;
+  font-size: 16px; /* 글자 크기 */
+  transition: background-color 0.2s ease;
 }
 
 .category-button:hover {
   background-color: deepskyblue; /* 호버 시 색상 변경 */
+}
+
+.hashtag-container {
+  position: absolute;
+  top: 120px;
+  right: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  width: 250px;
+  height: 250px;
+  background-color: none;
+  border-radius: 5px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  z-index: 300;
 }
 
 .popup-panel {
