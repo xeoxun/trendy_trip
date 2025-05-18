@@ -44,9 +44,9 @@
         required: true
       }
     },
-    method: {
+    methods: {
       addPlace() {
-        //id 전달
+        this.$emit('open-add-place');
       }
     }
   }

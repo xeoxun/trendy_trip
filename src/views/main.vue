@@ -47,7 +47,11 @@
       :place="selectedPlace"
       :style="popupStyle"
       @close="handleClosePlace"
+      @open-add-place="openAddPlace"
     />
+
+    <AddPlacePop v-if="isAddPlaceVisible" :style="AddPlaceStyle" @close="isAddPlaceVisible = false"/>
+
     <div id="category_btn">
       <button class="category-button" @click="openHashtag">관광명소</button>
       <button class="category-button" @click="openHashtag">카페</button>
@@ -61,6 +65,7 @@ import CalPop from '@/components/calender.vue'  // 일정 표
 import SearchPop from '@/components/search.vue'  // 장소 검색
 import SavePop from '@/components/save_file.vue'  // 파일 저장장
 import PlacePop from '@/components/place.vue'
+import AddPlacePop from '@/components/addPlace.vue'
 
 export default {
   name: 'MainPage',
@@ -68,7 +73,8 @@ export default {
     SearchPop,
     CalPop,
     SavePop,
-    PlacePop
+    PlacePop,
+    AddPlacePop
   },
   data() {
     return {
@@ -77,6 +83,7 @@ export default {
       isSearchPopupVisible: false, // 검색 팝업 상태 관리
       isSavePopupVisible: false,
       isPlacePopupVisible: false,
+      isAddPlaceVisible: false,
       map: null,
       markers: [], // 지도에 표시할 마커들
       selectedCoordinates: [] // 선택된 Day의 좌표 배열
@@ -236,6 +243,16 @@ export default {
       console.log("Bottom Left:", bottomLeft);
       console.log("Bottom Right:", bottomRight);
     },
+    openAddPlace() {
+      this.isAddPlaceVisible = true;
+
+      this.AddPlaceStyle = {
+        position: 'absolute',
+        top: '250px',
+        left: '480px',
+        zIndex: 1000
+      };
+    },
   },
   mounted() {
     // 네이버 지도 API 스크립트 로드
@@ -346,6 +363,7 @@ body {
   top: 20px;
   left: 90px; /* 사이드바 바로 옆 */
   z-index: 1000;
+  overflow: visible; 
 }
 
 /* transition 효과 */
