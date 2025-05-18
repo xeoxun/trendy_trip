@@ -9,9 +9,10 @@
         </a>
         {{ place.name }}   
       </h2> 
-      <p id="place_category"> {{ place.category }} </p>
+      <span id="place_category"> {{ place.category }} </span>
       <p id="place_address"> {{ place.address }} </p>
-      <p id="running time">  {{ place.open_time }} ~ {{ place.close_time }} </p>
+      <p id="running time"> 영업시간: {{ place.open_time }} ~ {{ place.close_time }} </p>
+      <p id="place_convenience" style="color: gray"> {{ place.convenience }}</p>
     </header>
     <article id ="review">
       
@@ -63,21 +64,36 @@
 }
   
 header {
-  flex: 0 0 20%; /* 상단 20% */
+  flex: 0 0 20%;
   margin-bottom: 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-} 
-
-header p{
-  margin: 0;       /* 모든 자식 요소의 기본 margin 제거 */
-  padding: 0;      /* 혹시 패딩 있으면 제거 */
-  line-height: 1;  /* 줄 간격 조절 (필요시) */
+  position: relative;
 }
 
 header h2 {
   margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#place_category {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: skyblue;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+header p {
+  margin: 0;
+  padding: 0;
+  line-height: 1;
 }
 
 article {
@@ -116,26 +132,26 @@ article {
 }
 
 .slider-image {
-  width: 250px; /* 이미지 고정 너비 */
-  height: 450px; /* 이미지 고정 높이 */
+  width: 250px;
+  height: 450px;
   object-fit: cover;
   border-radius: 8px;
-  flex-shrink: 0; /* 이미지가 작아지지 않도록 */
+  flex-shrink: 0;
 }
 
 footer {
   flex: 0 0 10%;
   display: flex;
-  justify-content: space-between; /* 양쪽 끝 정렬 */
+  justify-content: space-between;
   align-items: center;
-  padding: 0 10px; /* 좌우 여백 조절 */
+  padding: 0 10px;
 }
 
 #add_place,
 #close_btn {
-  background-color: white; /* 버튼 배경색 */
-  border: none; /* 테두리 제거 */
+  background-color: white;
+  border: none;
   padding: 10px 10px 10px 10px;
-  cursor: pointer; /* 커서 변경 */
+  cursor: pointer;
 }
 </style>

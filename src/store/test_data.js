@@ -3,6 +3,8 @@ export default [
     "places": {
         "name": "우무",
         "address": "제주 제주시 관덕로8길 40-1",
+        "x_cord": 126.5232845,
+        "y_cord": 33.5098134,
         "phone": null,
         "convenience": "포장, 남/녀 화장실 구분",
         "category": "카페,디저트",
@@ -24,6 +26,8 @@ export default [
     "places": {
         "name": "백리향",
         "address": "제주 제주시 조천읍 신북로 244 백리향",
+        "x_cord": 126.6211765,
+        "y_cord": 33.2613312,
         "phone": "50713949600",
         "convenience": "무선 인터넷, 포장, 배달, 주차",
         "category": "가정식",

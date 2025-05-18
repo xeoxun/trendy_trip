@@ -32,7 +32,7 @@
 
     <!-- 팝업 슬라이딩 애니메이션 -->
     <transition name="slide-popup">
-      <CalPop v-if="isCalendarPopupVisible" class="popup-panel" @close="calendar_Popup" @select-day="handleSelectDay"/>
+      <CalPop v-if="isCalendarPopupVisible" class="popup-panel" @close="calendar_Popup" @select-day="handleSelectDay" @get-place-info="displayPlaceInfo"/>
     </transition>
     <transition name="slide-popup">
       <SearchPop v-if="isSearchPopupVisible" class="popup-panel" @close="search_Popup" @select-place="handleSelectPlace"/>
@@ -49,9 +49,9 @@
       @close="handleClosePlace"
     />
     <div id="category_btn">
-      <button class="category-button" @click="handleRoundButtonClick">관광명소</button>
-      <button class="category-button" @click="handleRoundButtonClick">카페</button>
-      <button class="category-button" @click="handleRoundButtonClick">음식점</button>
+      <button class="category-button" @click="openHashtag">관광명소</button>
+      <button class="category-button" @click="openHashtag">카페</button>
+      <button class="category-button" @click="openHashtag">음식점</button>
     </div>
   </div>
 </template>
@@ -131,9 +131,23 @@ export default {
         };
       }
     },
-    handleSelectPlace(place) {
+    handleSelectPlace(place) {  // 장소 검색 선택 시, 플레이스 컴포넌트 생성성
       this.selectedPlace = place;
       this.isPlacePopupVisible = true;
+
+      if (this.selectedMarker) {
+        this.selectedMarker.setMap(null);
+      }
+
+      // 선택된 장소의 마커 생성
+      this.selectedMarker = new window.naver.maps.Marker({
+        position: new window.naver.maps.LatLng(place.y, place.x), // y=위도, x=경도 순으로 넣기
+        map: this.map,
+      });
+
+      // 지도 중심을 선택된 장소로 이동
+      this.map.setCenter(new window.naver.maps.LatLng(place.y, place.x));
+      this.map.setZoom(13); // 줌 레벨 조정 (필요에 따라 변경)
 
       this.popupStyle = {
           position: 'absolute',
@@ -195,7 +209,18 @@ export default {
         strokeWeight: 2,
       }); 
     },
-    logMapBounds(map) {
+    displayPlaceInfo(place) {
+      this.selectedPlace = place;
+      this.isPlacePopupVisible = true;
+
+      this.popupStyle = {
+        position: 'absolute',
+        top: `30px`,
+        left: `420px`, // 검색 팝업 오른쪽에 위치
+        zIndex: 1000
+      };
+    },
+    openHashtag(map) {
       const bounds = map.getBounds();
       const sw = bounds.getSW(); // 좌하단
       const ne = bounds.getNE(); // 우상단
@@ -210,7 +235,7 @@ export default {
       console.log("Top Right:", topRight);
       console.log("Bottom Left:", bottomLeft);
       console.log("Bottom Right:", bottomRight);
-    }
+    },
   },
   mounted() {
     // 네이버 지도 API 스크립트 로드
@@ -227,7 +252,7 @@ export default {
       });
 
       new window.naver.maps.Event.addListener(this.map, "idle", () => {
-          this.logMapBounds(this.map);
+          this.openHashtag(this.map);
       });
     };
   }

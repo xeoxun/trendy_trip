@@ -10,11 +10,9 @@
     </header>
     
     <article id="choose">
-      <hr style="border: 1px solid skyblue; width: 80%; margin: 20px auto;">
-
       <ul v-if="currentVisits.length > 0">
         <li v-for="visit in currentVisits" :key="visit.order">
-          <strong class="visit_num">{{ visit.order }} </strong> <span>{{ visit.place }}</span>
+          <strong class="visit_num">{{ visit.order }} </strong> <span @click="getplaceInfo(visit)"> {{ visit.place }} </span>
           <p> 이동시간: {{ visit.arrival_str }} ~  {{  visit.departure_str }}</p>
           <p> 체류시간: {{ visit.stay_duration }}</p>
           <hr style="border: 1px solid skyblue; width: 90%; margin-right: 30px;">
@@ -32,6 +30,7 @@
 <script>
 import { useDataStore } from '@/store/data'
 import calendarData from '@/store/test_calendar.js'
+import placesData from '@/store/test_data.js'
 
 export default {
   name: 'CalPop',
@@ -71,6 +70,19 @@ export default {
 
       // main.vue로 좌표 전달
       this.$emit("select-day", coordinates);
+    },
+    getplaceInfo(visit) {
+      // placesData에서 name이 visit.place와 일치하는 데이터 찾기
+      const matchedPlace = placesData.find(
+        (place) => place.places.name === visit.place
+      );
+
+      if (matchedPlace) {
+        // 부모 컴포넌트로 장소 정보 전달
+        this.$emit("get-place-info", matchedPlace.places);
+      } else {
+        console.warn("일치하는 장소 정보를 찾을 수 없습니다.");
+      }
     }
   }
 };
@@ -91,14 +103,14 @@ export default {
 }
 
 header {
-  height: 30%;
+  max-height: 30%;
   width: 100%;
   padding-left: 20px;
 }
 
 #choose {
   width: 100%;
-  height: 80%;
+  height: 70%;
   margin-top: 10px;
   overflow-y: auto; /* 스크롤 추가 */
 }
@@ -121,6 +133,12 @@ select {
   border-radius: 50%;
   font-size: 14px;
   margin-right: 8px;
+}
+
+.clickable {
+  cursor: pointer;
+  color: skyblue;
+  text-decoration: underline;
 }
 
 ul {
