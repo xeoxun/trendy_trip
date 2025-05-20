@@ -1,8 +1,8 @@
 <template>
   <div class="section">
     <div class="title">
-      <p> 어디서부터 여행을 즐기실건가요? </p>
-      <h3> 🏕️여행 장소를 입력해주세요 </h3>
+      <p> 어디서 여행을 시작하시나요? 숙소도 예약하셨다구요? </p>
+      <h3> 🏕️여행 장소와 숙소를 입력해주세요 </h3>
     </div>
     <div class="article_section">
       <div id="start_info"> 
@@ -34,6 +34,20 @@
         </form> 
         <input v-model="endTime" type="time" id="end_time" />
       </div>
+
+      <br>
+
+      <div id = "accommodations">
+        <h3> 🏠 숙소 정보 및 숙박 일차 입력 </h3>
+        <h4 style="margin-bottom: 0;"> ✅ 숙소명 </h4>
+        <input id="accommodations_info" placeholder="숙박하실 숙소의 상호를 입력해주세요" />
+        <h4 style="margin-bottom: 0;"> ✅ 숙박 일차 </h4> 
+        <div v-for="n in tripday" :key="n">
+          <label>
+            <input v-model="selectedDay" type="radio" :value="n" /> Day {{ n }}
+          </label>
+        </div>
+      </div>
     </div>
 
     <footer>
@@ -61,6 +75,7 @@ export default {
     return {
       startDay: data.startDate,
       endDay: data.endDate,
+      tripday: data.TripDays
     };
   },
   methods: {
@@ -96,6 +111,7 @@ export default {
   padding: 30px;
   width: 100%;
   box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .article_section p, h3 {
@@ -106,7 +122,8 @@ export default {
 #start_input,
 #start_time,
 #end_input,
-#end_time {
+#end_time,
+#accommodations_info {
   width: 95%;
   padding: 10px;
   margin: 5px 0;

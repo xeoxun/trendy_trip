@@ -37,7 +37,7 @@
         @select-day="handleSelectDay" 
         @get-place-info="displayPlaceInfo"
         @open-remove-place="openRemovePlace"
-        />
+      />
     </transition>
     <transition name="slide-popup">
       <SearchPop v-if="isSearchPopupVisible" class="popup-panel" @close="search_Popup" @select-place="handleSelectPlace"/>
@@ -50,7 +50,7 @@
       v-if="isPlacePopupVisible"
       :key="selectedPlace?.name" 
       :place="selectedPlace"
-      :style="popupStyle"
+      :style="currentPopupStyle"
       @close="handleClosePlace"
       @open-add-place="openAddPlace"
     />
@@ -65,19 +65,23 @@
       <button class="category-button" @click="openHashtag"> 숙소 </button>
     </div>
 
-    <HashtagButton v-if="showHashtag" class="hashtag-container" />
+    <HashtagButton v-if="showHashtag" class="hashtag-container" @select-hashtag="handleSelectHashtag"/>
+    <button v-if="isShowRefreshButton" @click="logMapBounds" class="refresh-btn"> 🔄️ 화면 갱신 </button>
   </div>
 </template>
 
 <script>
 import CalPop from '@/components/calender.vue'  // 일정 표
 import SearchPop from '@/components/search.vue'  // 장소 검색
-import SavePop from '@/components/save_file.vue'  // 파일 저장장
+import SavePop from '@/components/save_file.vue'  // 파일 저장
 import PlacePop from '@/components/place.vue'
 
 import AddPlacePop from '@/components/addPlace.vue'
 import RemovePlacePop from '@/components/removePlace.vue'
-import HashtagButton from '@/components/hashtag.vue';
+import HashtagButton from '@/components/hashtag.vue'
+
+import moveData from "@/store/test_move.js" // 해시태그별 장소 출력
+import placeData from "@/store/test_data.js"
 
 export default {
   name: 'MainPage',
@@ -99,10 +103,12 @@ export default {
       isPlacePopupVisible: false,
       isAddPlaceVisible: false,
       isRemovePlaceVisible: false,
+      isShowRefreshButton: false,
       map: null,
       markers: [], // 지도에 표시할 마커들
+      hash_markers: [], // 해시태그로 생성된 마커
       selectedCoordinates: [], // 선택된 Day의 좌표 배열
-      showHashtag: false // 해시태그 출력력
+      showHashtag: false // 해시태그 출력
     };
   },
   methods: {
@@ -113,6 +119,7 @@ export default {
       this.isPlacePopupVisible = false;
       this.isAddPlaceVisible = false;
       this.isRemovePlaceVisible =  false;
+      this.isShowRefreshButton = false;
     },
     calendar_Popup() {
       if (this.isCalendarPopupVisible) {
@@ -156,7 +163,7 @@ export default {
         };
       }
     },
-    handleSelectPlace(place) {  // 장소 검색 선택 시, 플레이스 컴포넌트 생성성
+    handleSelectPlace(place) {  // 장소 검색 선택 시, 플레이스 컴포넌트 생성
       this.selectedPlace = place;
       this.isPlacePopupVisible = true;
 
@@ -166,13 +173,13 @@ export default {
 
       // 선택된 장소의 마커 생성
       this.selectedMarker = new window.naver.maps.Marker({
-        position: new window.naver.maps.LatLng(place.y, place.x), // y=위도, x=경도 순으로 넣기
+        position: new window.naver.maps.LatLng(place.y_cord, place.x_cord), // y=위도, x=경도 순으로 넣기
         map: this.map,
       });
 
       // 지도 중심을 선택된 장소로 이동
-      this.map.setCenter(new window.naver.maps.LatLng(place.y, place.x));
-      this.map.setZoom(13); // 줌 레벨 조정 (필요에 따라 변경)
+      this.map.setCenter(new window.naver.maps.LatLng(place.y_cord, place.x_cord));
+      this.map.setZoom(15); // 줌 레벨 조정 (필요에 따라 변경)
 
       this.popupStyle = {
           position: 'absolute',
@@ -180,6 +187,8 @@ export default {
           left: `420px`, // 검색 팝업 오른쪽에 위치
           zIndex: 1000
         };
+
+      this.currentPopupStyle = this.popupStyle;
     },
     handleClosePlace() {
       this.selectedPlace = null; // 장소 팝업만 닫기
@@ -244,20 +253,35 @@ export default {
         left: `420px`, // 검색 팝업 오른쪽에 위치
         zIndex: 1000
       };
+
+      this.currentPopupStyle = this.popupStyle;
     },
     openHashtag() {
       this.showHashtag = !this.showHashtag;
 
-      if (this.map) {
-        const bounds = this.map.getBounds();
-        const sw = bounds.getSW();
-        const ne = bounds.getNE();
-
-        console.log("Top Left:", { lat: ne.lat(), lng: sw.lng() });
-        console.log("Top Right:", { lat: ne.lat(), lng: ne.lng() });
-        console.log("Bottom Left:", { lat: sw.lat(), lng: sw.lng() });
-        console.log("Bottom Right:", { lat: sw.lat(), lng: ne.lng() });
+      if (!this.showHashtag) {
+        // 해시태그 창이 닫힐 때 해시태그 마커 제거
+        this.clearMarkers();
+        return;
       }
+
+      if (this.map) {
+        // 기존 좌표 출력
+        this.logMapBounds();
+
+        // 지도가 이동할 때마다 좌표를 추출하는 이벤트 리스너 추가
+        this.map.addListener("bounds_changed", this.logMapBounds);
+      }
+    },
+    logMapBounds() {
+      const bounds = this.map.getBounds();
+      const sw = bounds.getSW();
+      const ne = bounds.getNE();
+
+      console.log("Top Left:", { lat: ne.lat(), lng: sw.lng() });
+      console.log("Top Right:", { lat: ne.lat(), lng: ne.lng() });
+      console.log("Bottom Left:", { lat: sw.lat(), lng: sw.lng() });
+      console.log("Bottom Right:", { lat: sw.lat(), lng: ne.lng() });
     },
     openAddPlace() {
       this.isAddPlaceVisible = true;
@@ -278,6 +302,88 @@ export default {
         left: '420px',
         zIndex: 1000
       };
+    },
+    handleSelectHashtag(selectedHashtag) {
+      console.log("부모에서 선택된 해시태그:", selectedHashtag);
+
+      // 맵이 로드되지 않은 경우 마커 생성 불가
+      if (!this.map) {
+        console.error("맵이 아직 로드되지 않았습니다.");
+        return;
+      }
+
+      // 기존 마커 초기화
+      this.clearMarkers();
+
+      if (!selectedHashtag) {
+        console.log("해시태그가 해제되어 마커를 제거합니다.");
+        return;
+      }
+
+      // 해시태그로 필터링된 장소
+      moveData[0].move.forEach((place, index) => {
+        console.log(`마커 생성 ${index + 1}:`, place.name, place.x_cord, place.y_cord);
+
+        const marker = new window.naver.maps.Marker({
+          position: new window.naver.maps.LatLng(place.y_cord, place.x_cord),
+          map: this.map,
+          title: place.name // 마커에 장소 이름 설정
+        });
+
+        window.naver.maps.Event.addListener(marker, 'click', () => {
+          this.showPlacePopup(place, marker);
+        });
+
+        window.naver.maps.Event.addListener(this.map, 'idle', () => {
+          this.isShowRefreshButton = true;
+        });
+
+        this.hash_markers.push(marker);
+      });
+    },
+    clearMarkers() {
+      // 기존 마커 모두 제거
+      this.hash_markers.forEach(marker => marker.setMap(null));
+      this.hash_markers = [];
+    },
+    showPlacePopup(place, marker) {   // 해시태그 마커 선택 시, 플레이스 정보 생성
+      console.log("마커 클릭:", place);
+
+      // test_data.js에서 일치하는 장소 찾기
+      if (!placeData || placeData.length === 0) {
+        console.error("placeData가 존재하지 않거나 비어있습니다.");
+        return;
+      }
+
+      const matchedPlace = placeData.find(p => p.places.name === place.name)?.places;
+
+      if (!matchedPlace) {
+        console.warn("해당 장소 정보가 test_data.js에 없습니다.");
+        return;
+      }
+
+      this.selectedPlace = matchedPlace; // 일치하는 장소 정보를 팝업에 전달
+      this.isPlacePopupVisible = true;
+
+      // 지도 중심을 마커 위치로 이동하고 줌인
+      this.map.setCenter(marker.getPosition());
+      this.map.setZoom(15);
+
+      // 마커 팝업 스타일 (마커 좌표 기준)
+      const markerPos = this.map.getProjection().fromCoordToOffset(marker.getPosition());
+
+      this.markerPopupStyle = {
+        position: 'absolute',
+        top: `${markerPos.y - 250}px`,  // 마커 위에 팝업 위치
+        left: `${markerPos.x + 150}px`,
+        zIndex: 1000
+      };
+
+      this.currentPopupStyle = this.markerPopupStyle;
+
+      this.map.addListener('dragstart', () => {
+        this.isPlacePopupVisible = false;
+      });
     }
   },
   mounted() {
@@ -401,6 +507,27 @@ body {
   overflow-y: auto;
   scrollbar-width: none;
   z-index: 300;
+}
+
+.refresh-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 999px; /* 둥근 모서리 */
+  padding: 10px 20px;
+
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.2s ease;
 }
 
 .popup-panel {

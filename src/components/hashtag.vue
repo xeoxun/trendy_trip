@@ -30,6 +30,8 @@ export default {
       } else {
         this.selectedHashtag = tag.hashtag_name; // 선택 상태로 변경
       }
+      
+      this.$emit("select-hashtag", this.selectedHashtag); // 부모로 선택된 해시태그 전달
       console.log("선택된 해시태그:", this.selectedHashtag);
     }
   }
