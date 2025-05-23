@@ -24,29 +24,19 @@ class PlaceSearchOutput(BaseModel):
 class PlaceDataResult(BaseModel):
     name: str
     address: str
+    x_cord: Optional[float] = None  
+    y_cord: Optional[float] = None
+    close_time: Optional[str] = None
     phone: Optional[str] = None
     convenience: Optional[str] = None
     category: Optional[str] = None
     website: Optional[str] = None
     business_hours: Optional[str] = None
     open_time: Optional[str] = None
-    close_time: Optional[str] = None
-    image_urls: List[str]
+    image_urls: List[str] = None
 
     class Config:
         orm_mode = True
 
 class PlaceDataResponse(BaseModel):
     places: PlaceDataResult
-
-class PlaceDetailOutput(BaseModel):
-    name: str
-    address: str
-    phone: Optional[str] = None
-    convenience: Optional[str] = None
-    category: Optional[str] = None
-    website: Optional[str] = None
-    business_hours: Optional[str] = None
-    open_time: Optional[str] = None
-    close_time: Optional[str] = None
-    image_urls: List[str] = []

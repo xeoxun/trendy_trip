@@ -2,83 +2,58 @@
   <div id="map_page">
     <nav id="side">
       <ul class="nav_list">
-        <li style="background-color: skyblue; border-color: skyblue;">
-          <h1> ✈️ </h1>
-        </li>
-        <li id="side_btn">
-          <button id="search_btn" @click="search_Popup($event)">
-            <p> 🔍 </p>
-          </button>
-        </li>
-        <li id="side_btn">
-          <button id="calender_btn" @click="calendar_Popup($event)">
-            <span> 📆 </span>
-          </button>
-        </li>
-        <li id="side_btn">
-          <button id="save_btn" @click="save_Popup($event)">
-            <span> 💾 </span>
-          </button>
-        </li>
-        <li id="side_btn">
-          <button id="test_btn" @click="place_Popup($event)">
-            <span> ❓ </span>
+        <li v-for="sidebtn in navButtons" :key="sidebtn.id" :style="sidebtn.style">
+          <button :id="sidebtn.id" @click="togglePopup(sidebtn.popupKey)">
+            <span v-if="sidebtn.icon" v-html="sidebtn.icon"></span>
+            <p v-else>{{ sidebtn.label }}</p>
           </button>
         </li>
       </ul>
     </nav>
 
-    <div id="map" style="width: 100%; height: 100%;"></div>
+    <div id="map" style="width: 100%; height: 100%;"> </div> <!-- 네이버 지도 -->
 
-    <!-- 팝업 슬라이딩 애니메이션 -->
     <transition name="slide-popup">
-      <CalPop v-if="isCalendarPopupVisible" class="popup-panel" 
-        @close="calendar_Popup" 
+      <CalPop v-if="isPopupVisible.calendar" class="popup-panel" :style="popupStyle"
+        @close="togglePopup('calendar')" 
         @select-day="handleSelectDay" 
         @get-place-info="displayPlaceInfo"
         @open-remove-place="openRemovePlace"
       />
     </transition>
     <transition name="slide-popup">
-      <SearchPop v-if="isSearchPopupVisible" class="popup-panel" @close="search_Popup" @select-place="handleSelectPlace"/>
+      <SearchPop v-if="isPopupVisible.search" class="popup-panel" :style="popupStyle" @close="togglePopup('search')" @select-place="handleSelectPlace"/>
     </transition>
     <transition name="slide-popup">
-      <SavePop v-if="isSavePopupVisible" class="popup-panel" @close="save_Popup" />
+      <SavePop v-if="isPopupVisible.save" class="popup-panel" :style="popupStyle" @close="togglePopup('save')" />
     </transition>
 
-    <PlacePop 
-      v-if="isPlacePopupVisible"
-      :key="selectedPlace?.name" 
-      :place="selectedPlace"
-      :style="currentPopupStyle"
+    <PlacePop v-if="isPopupVisible.placepop" :key="selectedPlace?.name" :place="selectedPlace" :style="currentPopupStyle"
       @close="handleClosePlace"
       @open-add-place="openAddPlace"
     />
 
-    <AddPlacePop v-if="isAddPlaceVisible" :style="AddPlaceStyle" @close="isAddPlaceVisible = false"/>
-    <RemovePlacePop v-if="isRemovePlaceVisible" :style="RemovePlaceStyle" @close="isRemovePlaceVisible = false" />
+    <AddPlacePop v-if="isPopupVisible.addPlace" :style="AddPlaceStyle" @close="isAddPlaceVisible = false"/>
+    <RemovePlacePop v-if="isPopupVisible.removePlace" :style="RemovePlaceStyle" @close="isRemovePlaceVisible = false" />
     
-    <div id="category_btn">
-      <button class="category-button" @click="openHashtag"> 관광명소 </button>
-      <button class="category-button" @click="openHashtag"> 카페 </button>
-      <button class="category-button" @click="openHashtag"> 음식점 </button>
-      <button class="category-button" @click="openHashtag"> 숙소 </button>
-    </div>
-
+    <CategoryBtn @open-hashtag="handleOpenHashtag"> </CategoryBtn>
     <HashtagButton v-if="showHashtag" class="hashtag-container" @select-hashtag="handleSelectHashtag"/>
+
     <button v-if="isShowRefreshButton" @click="logMapBounds" class="refresh-btn"> 🔄️ 화면 갱신 </button>
   </div>
 </template>
 
 <script>
-import CalPop from '@/components/calender.vue'  // 일정 표
-import SearchPop from '@/components/search.vue'  // 장소 검색
-import SavePop from '@/components/save_file.vue'  // 파일 저장
-import PlacePop from '@/components/place.vue'
+import CalPop from '@/components/popup/calender.vue'  // 일정 표
+import SearchPop from '@/components/popup/search.vue'  // 장소 검색
+import SavePop from '@/components/popup/save_file.vue'  // 파일 저장
+import PlacePop from '@/components/popup/place.vue'
 
 import AddPlacePop from '@/components/addPlace.vue'
 import RemovePlacePop from '@/components/removePlace.vue'
-import HashtagButton from '@/components/hashtag.vue'
+
+import HashtagButton from '@/components/button/hashtag.vue'
+import CategoryBtn from '@/components/button/category.vue'
 
 import moveData from "@/store/test_move.js" // 해시태그별 장소 출력
 import placeData from "@/store/test_data.js"
@@ -86,86 +61,57 @@ import placeData from "@/store/test_data.js"
 export default {
   name: 'MainPage',
   components: {
-    SearchPop,
-    CalPop,
-    SavePop,
-    PlacePop,
-    AddPlacePop,
-    RemovePlacePop,
+    SearchPop, CalPop, SavePop, PlacePop, CategoryBtn,
+    AddPlacePop, RemovePlacePop, 
     HashtagButton
   },
   data() {
     return {
       selectedPlace: null,
-      isCalendarPopupVisible: false, // 달력 팝업 상태 관리
-      isSearchPopupVisible: false, // 검색 팝업 상태 관리
-      isSavePopupVisible: false,
-      isPlacePopupVisible: false,
-      isAddPlaceVisible: false,
-      isRemovePlaceVisible: false,
       isShowRefreshButton: false,
+      isPopupVisible: {  // 팝업 표시
+        calendar: false, 
+        search: false,
+        save: false,
+        placepop: false,
+        addPlace: false,
+        remove:false
+      },
+      navButtons: [  // 사이드 버튼
+        { id: 'logo', label: '✈️', style: { backgroundColor: 'skyblue', borderColor: 'skyblue' }, popupKey: null },
+        { id: 'search_btn', label: '🔍', popupKey: 'search' },
+        { id: 'calendar_btn', label: '📆', popupKey: 'calendar' },
+        { id: 'save_btn', label: '💾', popupKey: 'save' }
+      ],
       map: null,
-      markers: [], // 지도에 표시할 마커들
-      hash_markers: [], // 해시태그로 생성된 마커
+      markers: [], // 지도에 표시할 일정 장소 마커들
+      hash_markers: [], // 해시태그로 생성된 장소 마커
       selectedCoordinates: [], // 선택된 Day의 좌표 배열
-      showHashtag: false // 해시태그 출력
+      showHashtag: false, // 해시태그 출력
+      selectedCategory: null  // 선택된 카테고리리
     };
   },
   methods: {
-    closePopups() {
-      this.isCalendarPopupVisible = false;
-      this.isSearchPopupVisible = false;
-      this.isSavePopupVisible = false;
-      this.isPlacePopupVisible = false;
-      this.isAddPlaceVisible = false;
-      this.isRemovePlaceVisible =  false;
-      this.isShowRefreshButton = false;
-    },
-    calendar_Popup() {
-      if (this.isCalendarPopupVisible) {
-        this.closePopups(); // 이미 열려있으면 닫기
-      } else {
-        this.closePopups(); // 다른 팝업 닫기
-        this.isCalendarPopupVisible = true; // 달력 팝업 열기
-        this.popupStyle = {
+    togglePopup(popupKey) {
+      if (!popupKey) return; // 예: 로고 버튼처럼 팝업 없으면 무시
+      // 현재 누른 팝업 상태 반전
+      const currentState = this.isPopupVisible[popupKey];
+      // 모든 팝업 닫기
+      Object.keys(this.isPopupVisible).forEach(key => {
+        this.isPopupVisible[key] = false;
+      });
+      // 토글 상태 적용
+      this.isPopupVisible[popupKey] = !currentState;
+      this.popupStyle = {
           position: 'absolute',
           top: `20px`,
-          left: `110px`,
+          left: `100px`,
           zIndex: 1000
         };
-      }
     },
-    search_Popup() {
-      if (this.isSearchPopupVisible) {
-        this.closePopups(); // 이미 열려있으면 닫기
-      } else {
-        this.closePopups(); // 다른 팝업 닫기
-        this.isSearchPopupVisible = true; // 검색 팝업 열기
-        this.popupStyle = {
-          position: 'absolute',
-          top: `20px`,
-          left: `110px`,
-          zIndex: 1000
-        };
-      }
-    },
-    save_Popup() {
-      if (this.isSavePopupVisible) {
-        this.closePopups(); // 이미 열려있으면 닫기
-      } else {
-        this.closePopups(); // 다른 팝업 닫기
-        this.isSavePopupVisible = true; // 검색 팝업 열기
-        this.popupStyle = {
-          position: 'absolute',
-          top: `20px`,
-          left: `110px`,
-          zIndex: 1000
-        };
-      }
-    },
-    handleSelectPlace(place) {  // 장소 검색 선택 시, 플레이스 컴포넌트 생성
+    handleSelectPlace(place) {  // '장소 검색'에서 장소명명 선택 시, place.vue 컴포넌트 생성
       this.selectedPlace = place;
-      this.isPlacePopupVisible = true;
+      this.isPopupVisible["placepop"] = true;
 
       if (this.selectedMarker) {
         this.selectedMarker.setMap(null);
@@ -181,18 +127,22 @@ export default {
       this.map.setCenter(new window.naver.maps.LatLng(place.y_cord, place.x_cord));
       this.map.setZoom(15); // 줌 레벨 조정 (필요에 따라 변경)
 
-      this.popupStyle = {
+      this.placePopupStyle = {
           position: 'absolute',
           top: `30px`,
           left: `420px`, // 검색 팝업 오른쪽에 위치
           zIndex: 1000
         };
 
-      this.currentPopupStyle = this.popupStyle;
+      this.currentPopupStyle = this.placePopupStyle;
     },
     handleClosePlace() {
+      if (this.selectedMarker) {  // 마커가 있다면 삭제
+        this.selectedMarker.setMap(null);
+        this.selectedMarker = null;
+      }
       this.selectedPlace = null; // 장소 팝업만 닫기
-      this.isPlacePopupVisible = false;
+      this.isPopupVisible["placepop"] = false;
     },
     // SVG로 숫자 마커 아이콘 생성 함수
     createNumberMarkerIcon(number) {
@@ -245,33 +195,21 @@ export default {
     },
     displayPlaceInfo(place) {
       this.selectedPlace = place;
-      this.isPlacePopupVisible = true;
+      this.isPopupVisible["placepop"] = true;
 
-      this.popupStyle = {
+      this.placePopupStyle = {
         position: 'absolute',
         top: `30px`,
         left: `420px`, // 검색 팝업 오른쪽에 위치
         zIndex: 1000
       };
 
-      this.currentPopupStyle = this.popupStyle;
+      this.currentPopupStyle = this.placePopupStyle;
     },
-    openHashtag() {
-      this.showHashtag = !this.showHashtag;
-
-      if (!this.showHashtag) {
-        // 해시태그 창이 닫힐 때 해시태그 마커 제거
-        this.clearMarkers();
-        return;
-      }
-
-      if (this.map) {
-        // 기존 좌표 출력
-        this.logMapBounds();
-
-        // 지도가 이동할 때마다 좌표를 추출하는 이벤트 리스너 추가
-        this.map.addListener("bounds_changed", this.logMapBounds);
-      }
+    handleOpenHashtag(category) {
+      this.selectedCategory = category;
+      this.showHashtag = true;
+      console.log("선택된 카테고리:", category);
     },
     logMapBounds() {
       const bounds = this.map.getBounds();
@@ -284,7 +222,7 @@ export default {
       console.log("Bottom Right:", { lat: sw.lat(), lng: ne.lng() });
     },
     openAddPlace() {
-      this.isAddPlaceVisible = true;
+      this.isPopupVisible["addPlace"] = true;
 
       this.AddPlaceStyle = {
         position: 'absolute',
@@ -294,7 +232,7 @@ export default {
       };
     },
     openRemovePlace() {
-      this.isRemovePlaceVisible = true;
+      this.isPopupVisible["removePlace"] = true;
 
       this.RemovePlaceStyle = {
         position: 'absolute',
@@ -367,7 +305,7 @@ export default {
 
       // 지도 중심을 마커 위치로 이동하고 줌인
       this.map.setCenter(marker.getPosition());
-      this.map.setZoom(15);
+      this.map.setZoom(16);
 
       // 마커 팝업 스타일 (마커 좌표 기준)
       const markerPos = this.map.getProjection().fromCoordToOffset(marker.getPosition());
@@ -464,35 +402,6 @@ body {
   cursor: pointer;
 }
 
-#category_btn {
-  position: absolute; /* 절대 위치로 설정 */
-  top: 20px; /* 상단에서의 위치 */
-  right: 20px; /* 오른쪽에서의 위치 */
-  display: flex; /* Flexbox 사용 */
-  flex-direction: row; /* 수평 정렬 */
-  gap: 10px; /* 버튼 간의 간격 */
-}
-
-.category-button {
-  width: 80px; /* 너비 (원 크기) */
-  height: 80px; /* 높이 (원 크기) */
-  padding: 0; /* 패딩 제거 */
-  background-color: rgba(73, 210, 255, 0.5); /* 배경색 */
-  color: white; /* 글자색 */
-  border: 2px solid white; /* 테두리 제거 */
-  border-radius: 50%; /* 동그라미 모양 */
-  cursor: pointer; /* 커서 변경 */
-  display: flex; /* 내용 가운데 정렬 */
-  align-items: center;
-  justify-content: center;
-  font-size: 16px; /* 글자 크기 */
-  transition: background-color 0.2s ease;
-}
-
-.category-button:hover {
-  background-color: deepskyblue; /* 호버 시 색상 변경 */
-}
-
 .hashtag-container {
   position: absolute;
   top: 120px;
@@ -561,5 +470,4 @@ body {
   opacity: 0;
   transform: translateX(-20px);
 }
-
 </style>

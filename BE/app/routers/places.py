@@ -14,14 +14,13 @@ from app.cache import user_schedules
 from app.schemas.places import (
     PlaceSearchOutput, PlaceSearchResult,PlaceNameOnly,
     PlaceDataResponse, PlaceDataResult,
-    PlaceEditInput, PlaceEditOutput,PlaceDetailOutput
+    PlaceEditInput, PlaceEditOutput
 )
 
 import re
 
 router = APIRouter(prefix="/api/places", tags=["places"])
 
-# 장소 모델만 등록 (image_model은 따로 필요 없음)
 PLACE_MODELS = {
     "cafe": JejuCafe,
     "restaurant": JejuRestaurant,
@@ -44,8 +43,7 @@ def fetch_image_urls(db: Session, model, name: str) -> list[str]:
         print(f"[이미지 파싱 오류]: {e}")
         return []
 
-#  장소 검색
-
+# ---------- /search ----------
 @router.get("/search", response_model=PlaceSearchOutput)
 def search_places(name: str = Query(..., min_length=1), db: Session = Depends(get_db)):
     search_term = f"%{name.strip()}%"
@@ -68,7 +66,7 @@ def search_places(name: str = Query(..., min_length=1), db: Session = Depends(ge
     return PlaceSearchOutput(search=results)
 
 
-#  장소 상세 정보 조회
+# ---------- /data ----------
 @router.get("/data", response_model=PlaceDataResponse)
 def get_place_detail(name: str = Query(..., min_length=1), db: Session = Depends(get_db)):
     place_name = name.strip()
@@ -80,6 +78,8 @@ def get_place_detail(name: str = Query(..., min_length=1), db: Session = Depends
                 places=PlaceDataResult(
                     name=place.name,
                     address=place.address,
+                    x_cord=getattr(place, "x_cord", None), 
+                    y_cord=getattr(place, "y_cord", None),
                     phone=getattr(place, "phone", None),
                     convenience=getattr(place, "convenience", None),
                     category=getattr(place, "category", None),
@@ -106,7 +106,7 @@ def convert_to_day_keys(places_by_day: Dict[str, List], start_date_str: str) -> 
         ]
     return result
 
-#  일정에 장소 추가
+# ---------- /add ----------
 @router.post("/add", response_model=PlaceEditOutput)
 def add_place(input_data: PlaceEditInput, user_id: str = Query(...), db: Session = Depends(get_db)):
     if user_id not in user_schedules:
@@ -151,7 +151,7 @@ def add_place(input_data: PlaceEditInput, user_id: str = Query(...), db: Session
         places_by_day=convert_to_day_keys(user_data["places_by_day"], user_data["date"].start_date)
     )
 
-#  일정에서 장소 제거
+# ---------- /remove ----------
 @router.post("/remove", response_model=PlaceEditOutput)
 def remove_place(input_data: PlaceEditInput, user_id: str = Query(...)):
     if user_id not in user_schedules:

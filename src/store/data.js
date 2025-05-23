@@ -37,6 +37,6 @@ export const useDataStore = defineStore('data', {
       this.endPlace = eplace,
       this.startTime = stime,
       this.endTime = etime
-    },
+    }
   }
 });

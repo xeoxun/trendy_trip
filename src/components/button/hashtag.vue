@@ -19,7 +19,7 @@ export default {
   name: 'HashtagButtons',
   data() {
     return {
-      hashtags: hashtagData[1].tag, // test_hashtag.js 파일의 해시태그 데이터 사용
+      hashtags: hashtagData[0].tag, // test_hashtag.js 파일의 해시태그 데이터 사용
       selectedHashtag: null // 선택된 해시태그
     };
   },

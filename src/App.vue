@@ -26,12 +26,12 @@
 }
 
 #web_title {
-  height: 10vh;
+  height: 8vh;
   width: 100%;
   padding-left: 30px;
   display: flex;
   align-items: center;
-  font-size: 1.5em;
+  font-size: 1.3em;
   font-family: 'Pretendard SemiBold', sans-serif;
   background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
