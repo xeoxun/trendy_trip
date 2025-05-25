@@ -10,15 +10,7 @@
     </header>
     
     <article id="choose">
-      <ul v-if="currentVisits.length > 0">
-        <li v-for="visit in currentVisits" :key="visit.order">
-          <strong class="visit_num">{{ visit.order }} </strong> <span @click="getplaceInfo(visit)"> {{ visit.place }} </span>
-          <p> 이동시간: {{ visit.arrival_str }} ~  {{  visit.departure_str }}</p>
-          <p> 체류시간: {{ visit.stay_duration }}</p>
-          <hr style="border: 1px solid skyblue; width: 90%; margin-right: 30px;">
-        </li>
-      </ul>
-      <p v-else>선택된 일차에 방문지가 없습니다.</p>
+      <ScheduleList :visits="currentVisits" @get-place-info="getplaceInfo" />
     </article>
 
     <footer>
@@ -33,8 +25,13 @@ import { useDataStore } from '@/store/data'
 import calendarData from '@/store/test_calendar.js'
 import placesData from '@/store/test_data.js'
 
+import ScheduleList from '@/components/layout/scheduleList.vue'
+
 export default {
   name: 'CalPop',
+  components: {
+    ScheduleList
+  },
   data() {
     return {
       selectedDay: 0, // 기본 Day 1 선택
@@ -110,14 +107,14 @@ export default {
 }
 
 header {
-  max-height: 30%;
+  max-height: 30vh;
   width: 100%;
-  padding-left: 20px;
+  padding: 20px;
 }
 
 #choose {
   width: 100%;
-  height: 70%;
+  height: 55vh;
   margin-top: 10px;
   overflow-y: auto; /* 스크롤 추가 */
 }
@@ -164,9 +161,10 @@ li p {
 }
 
 footer {
-  height: 10%;
+  height: 10vh;
   width: 100%;
   display: flex;
+  padding:10px;
   justify-content: space-between;
   align-items: center;
 }

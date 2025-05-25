@@ -71,12 +71,12 @@ export default {
   border-radius: 10px;
   position: absolute;
   overflow: hidden;
+  
 }
 
 header {
   width: 100%;
   flex: 0 0 10%;
-  padding: 10px;
   display: flex;
   flex-direction: column;
 }

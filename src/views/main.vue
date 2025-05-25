@@ -49,8 +49,8 @@ import SearchPop from '@/components/popup/search.vue'  // 장소 검색
 import SavePop from '@/components/popup/save_file.vue'  // 파일 저장
 import PlacePop from '@/components/popup/place.vue'
 
-import AddPlacePop from '@/components/addPlace.vue'
-import RemovePlacePop from '@/components/removePlace.vue'
+import AddPlacePop from '@/components/popup/addPlace.vue'
+import RemovePlacePop from '@/components/popup/removePlace.vue'
 
 import HashtagButton from '@/components/button/hashtag.vue'
 import CategoryBtn from '@/components/button/category.vue'
@@ -301,7 +301,7 @@ export default {
       }
 
       this.selectedPlace = matchedPlace; // 일치하는 장소 정보를 팝업에 전달
-      this.isPlacePopupVisible = true;
+      this.isPopupVisible["placepop"] = true;
 
       // 지도 중심을 마커 위치로 이동하고 줌인
       this.map.setCenter(marker.getPosition());
